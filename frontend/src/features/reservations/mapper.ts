@@ -6,5 +6,6 @@ export function toLibreBookingReservation(input: CreateReservationInput) {
     resourceId: Number(input.resourceId),
     startDateTime: input.startsAt,
     endDateTime: input.endsAt,
+    accessories: input.accessories,
   };
 }

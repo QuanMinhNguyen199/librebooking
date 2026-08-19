@@ -3,6 +3,7 @@
 import { ArrowUpRight, Bell, Bot, Boxes, Building2, CalendarDays, Car, ChartNoAxesCombined, ChevronDown, CircleDot, Clock3, Gauge, Laptop, LayoutGrid, Menu, MoreHorizontal, Plus, Search, Settings, UserRoundCog, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { BrandMark } from "@/components/brand/brand-mark";
+import { FloatingAssistant } from "@/components/assistant/floating-assistant";
 import { DebugConsole, type DebugEntry } from "@/components/debug/debug-console";
 import { LoginScreen } from "@/features/authentication/components/login-screen";
 import { demoResources } from "@/features/resources/mock";
@@ -122,6 +123,7 @@ export default function Home() {
       </section>
       {toast && <div className="fixed bottom-6 right-6 z-50 flex items-center gap-3 rounded-xl bg-[#171717] px-4 py-3 text-sm font-medium text-white shadow-xl"><span className="grid h-7 w-7 place-items-center rounded-lg bg-red-400/20 text-red-300"><CalendarDays size={15} /></span> Đã thêm lịch sử dụng mới</div>}
       <ReservationDialog open={bookingOpen} onClose={() => setBookingOpen(false)} onCreated={reservationCreated} onError={reportError} />
+      <FloatingAssistant onOpenBooking={() => setBookingOpen(true)} />
       {debugConsole}
     </main>
   );

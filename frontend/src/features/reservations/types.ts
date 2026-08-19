@@ -12,4 +12,8 @@ export type CreateReservationInput = {
   resourceName: string;
   startsAt: string;
   endsAt: string;
+  accessories: Array<{
+    accessoryId: number;
+    quantityRequested: number;
+  }>;
 };
