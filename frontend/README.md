@@ -1,31 +1,55 @@
-# Nexa Resource Frontend
+# THEHEGEO Resource Frontend
 
-Next.js demo UI for the LibreBooking fork.
+Giao diện Next.js mới dành cho hệ thống quản lý tài nguyên của công ty. Phần
+nghiệp vụ booking được kế thừa từ LibreBooking và kết nối thông qua REST API.
 
-## Run locally
+## Chạy demo
 
 ```bash
 npm install
 npm run dev
 ```
 
-Open http://localhost:3000. The current dashboard uses demo data so it can be
-presented without PHP/MySQL. `src/lib/librebooking-client.ts` contains the first
-server-side adapter for the LibreBooking REST API.
+Mở <http://localhost:3000> và đăng nhập bằng:
 
-Demo credentials: `admin` / `demo123`. The upstream LibreBooking demo password
-`demoadmin` is also accepted to avoid confusion during presentations.
+```text
+admin / demo123
+```
 
-Copy `.env.example` to `.env.local` when connecting a LibreBooking instance. Do not expose the LibreBooking session token to browser code.
+Mật khẩu `demoadmin` của demo LibreBooking gốc cũng được chấp nhận.
 
-## Current status
+Demo hiện dùng dữ liệu mẫu nên có thể chạy mà không cần PHP hoặc MySQL.
 
-- Dashboard UI: ready for demo.
-- Login screen and logout interaction: ready for demo.
-- Real-time error-only debug console: captures failed actions, HTTP/network errors,
-  JavaScript errors, rejected promises, and `console.error`; successful actions
-  are intentionally not logged.
-- Responsive navigation: ready for demo.
-- LibreBooking client: initial authentication/resources/reservations methods.
-- Live LibreBooking data: not connected yet.
-- MCP server: planned, not implemented yet.
+## Công cụ chính
+
+| Công cụ | Mục đích |
+|---|---|
+| Next.js + React | Xây dựng giao diện và các luồng tương tác |
+| TypeScript | Kiểm soát dữ liệu và giảm lỗi khi kết nối API |
+| Tailwind CSS | Styling responsive theo màu sắc THEHEGEO |
+| Lucide React | Cung cấp icon cho giao diện |
+| LibreBooking client | Chuẩn hóa việc gọi Authentication, Resources và Reservations API |
+| Debug console | Ghi lỗi action, HTTP, network và JavaScript theo thời gian thực |
+| ESLint | Kiểm tra chất lượng mã nguồn |
+
+## Kiểm tra trước khi chạy demo
+
+```bash
+npm run lint
+npm run build
+```
+
+## Trạng thái hiện tại
+
+- Màn hình đăng nhập và dashboard: sẵn sàng demo.
+- Giao diện responsive và nhận diện THEHEGEO: sẵn sàng demo.
+- Debug log real-time: sẵn sàng demo; thao tác thành công không được ghi log.
+- LibreBooking client: đã có khung Authentication, Resources và Reservations.
+- Dữ liệu LibreBooking thật: chưa kết nối.
+- MCP server: đang trong kế hoạch, chưa triển khai.
+
+## Kết nối backend thật
+
+Sao chép `.env.example` thành `.env.local`, sau đó cấu hình
+`LIBREBOOKING_BASE_URL`. Session token phải được giữ ở server và không được đưa
+vào mã chạy trên trình duyệt.

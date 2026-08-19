@@ -1,39 +1,44 @@
 
-# Nexa Resource — LibreBooking with a modern Next.js UI
+# THEHEGEO Resource — Giao diện Next.js cho LibreBooking
 
-This fork keeps LibreBooking as the booking engine and adds a new company-facing
-frontend in [`frontend/`](./frontend). The PHP application is intentionally kept:
-it owns authentication, resources, schedules, permissions, availability, and
-reservations. The Next.js application replaces the user experience, not the
-LibreBooking backend.
+Đây là bản fork sử dụng LibreBooking làm hệ thống nghiệp vụ đặt tài nguyên và bổ
+sung giao diện mới dành cho công ty trong thư mục [`frontend/`](./frontend).
+Backend PHP vẫn được giữ để xử lý đăng nhập, tài nguyên, lịch, phân quyền và
+reservation. Next.js chỉ thay thế trải nghiệm giao diện cũ.
 
-## Run the UI demo
+## Chạy bản demo giao diện
 
-The demo uses local sample data, so PHP, Apache, and MySQL are not required.
+Bản demo đang sử dụng dữ liệu mẫu nên chưa cần cài PHP, Apache hoặc MySQL.
 
-### Requirements
+### Yêu cầu
 
-- Node.js 20 or newer
+- Node.js 20 trở lên
 - npm
 
-### Start
+### Khởi chạy
 
 ```bash
 git clone https://github.com/QuanMinhNguyen199/librebooking.git
 cd librebooking
-git switch feature/company-ui-demo
+git switch develop
 cd frontend
 npm install
 npm run dev
 ```
 
-Open <http://localhost:3000>.
+Mở <http://localhost:3000>.
 
-The demo includes a responsive dashboard for physical resources, bookings,
-costs, Claude usage, and MCP connection status. Data is mocked for presentation;
-it is not yet read from a live LibreBooking installation.
+Bản demo gồm màn hình đăng nhập, dashboard responsive, tài nguyên vật lý,
+booking, chi phí, Claude usage và debug log real-time. Dữ liệu hiện tại là dữ
+liệu mẫu phục vụ trình bày, chưa được lấy từ LibreBooking đang chạy thật.
 
-### Validate the frontend
+Tài khoản demo:
+
+```text
+admin / demo123
+```
+
+### Kiểm tra mã nguồn
 
 ```bash
 cd frontend
@@ -41,39 +46,54 @@ npm run lint
 npm run build
 ```
 
-## Project architecture
+## Kiến trúc
 
 ```text
 Next.js UI -> server-side adapter -> LibreBooking REST API -> MySQL/MariaDB
 AI client  -> MCP server ---------^
 ```
 
-- `frontend/`: new Next.js interface and LibreBooking TypeScript adapter.
-- Existing PHP directories: LibreBooking backend and REST API.
-- `WebServices/`: API implementation used by the new UI and future MCP server.
-- `database_schema/`: LibreBooking schema and upgrade scripts.
+- `frontend/`: giao diện Next.js và TypeScript adapter cho LibreBooking.
+- Các thư mục PHP hiện có: backend và REST API của LibreBooking.
+- `WebServices/`: API được giao diện mới và MCP server sử dụng.
+- `database_schema/`: schema và script nâng cấp database LibreBooking.
 
-The browser must not access the LibreBooking database or retain privileged API
-credentials. When the live integration is enabled, the server-side adapter will
-own LibreBooking sessions and enforce the current user's permissions.
+Trình duyệt không được truy cập trực tiếp database hoặc lưu credential đặc
+quyền. Khi kết nối dữ liệu thật, adapter phía server sẽ quản lý session
+LibreBooking và áp dụng quyền của người đang đăng nhập.
 
-## Connect a LibreBooking instance
+## Công cụ đang sử dụng
 
-Copy the example environment file:
+| Công cụ | Mục đích |
+|---|---|
+| LibreBooking | Backend xử lý tài nguyên, lịch, quyền và reservation |
+| PHP + MySQL/MariaDB | Chạy nghiệp vụ và lưu dữ liệu LibreBooking |
+| Next.js + React | Xây dựng giao diện web mới và responsive |
+| TypeScript | Kiểm soát kiểu dữ liệu giữa UI và LibreBooking API |
+| Tailwind CSS | Xây dựng giao diện theo nhận diện THEHEGEO |
+| Lucide React | Bộ icon cho dashboard và các thao tác |
+| LibreBooking REST API | Đồng bộ user, resource, schedule và reservation |
+| MCP | Cho phép trợ lý AI tìm và đặt tài nguyên; hiện đang ở giai đoạn kế hoạch |
+| ESLint | Phát hiện lỗi và giữ quy chuẩn mã frontend |
+| Debug console | Hiển thị lỗi UI, HTTP và network theo thời gian thực |
+
+## Kết nối LibreBooking thật
+
+Sao chép file cấu hình mẫu:
 
 ```bash
 cd frontend
 cp .env.example .env.local
 ```
 
-Then set `LIBREBOOKING_BASE_URL`. The REST API must also be enabled in the
-LibreBooking configuration. The initial client is located at
+Sau đó cấu hình `LIBREBOOKING_BASE_URL` và bật REST API trong LibreBooking.
+Client kết nối ban đầu nằm tại
 [`frontend/src/lib/librebooking-client.ts`](./frontend/src/lib/librebooking-client.ts).
 
-## Upstream LibreBooking documentation
+## Tài liệu LibreBooking gốc
 
-The original LibreBooking documentation is preserved below for backend setup,
-deployment, contribution, and license details.
+Tài liệu nguyên bản được giữ bên dưới để tham khảo cách cài backend, triển khai,
+đóng góp mã nguồn và giấy phép.
 
 ---
 
