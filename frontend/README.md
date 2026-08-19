@@ -28,6 +28,10 @@ Demo hiện dùng dữ liệu mẫu nên có thể chạy mà không cần PHP h
 4. Chọn **Xác nhận đặt lịch**.
 5. Booking mới xuất hiện ngay trong mục **Lịch hôm nay**.
 
+Mục **Lịch đặt** trên sidebar sẽ cuộn tới khu vực lịch và làm nổi bật danh sách
+booking. Trong phiên bản hoàn chỉnh, mục này sẽ mở trang lịch ngày/tuần/tháng
+riêng và tải dữ liệu từ Reservations API.
+
 Nếu giờ kết thúc không hợp lệ, lỗi sẽ xuất hiện ngay trong debug console.
 
 ## Công cụ chính
