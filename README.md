@@ -1,5 +1,83 @@
 
-# Librebooking
+# Nexa Resource — LibreBooking with a modern Next.js UI
+
+This fork keeps LibreBooking as the booking engine and adds a new company-facing
+frontend in [`frontend/`](./frontend). The PHP application is intentionally kept:
+it owns authentication, resources, schedules, permissions, availability, and
+reservations. The Next.js application replaces the user experience, not the
+LibreBooking backend.
+
+## Run the UI demo
+
+The demo uses local sample data, so PHP, Apache, and MySQL are not required.
+
+### Requirements
+
+- Node.js 20 or newer
+- npm
+
+### Start
+
+```bash
+git clone https://github.com/QuanMinhNguyen199/librebooking.git
+cd librebooking
+git switch feature/company-ui-demo
+cd frontend
+npm install
+npm run dev
+```
+
+Open <http://localhost:3000>.
+
+The demo includes a responsive dashboard for physical resources, bookings,
+costs, Claude usage, and MCP connection status. Data is mocked for presentation;
+it is not yet read from a live LibreBooking installation.
+
+### Validate the frontend
+
+```bash
+cd frontend
+npm run lint
+npm run build
+```
+
+## Project architecture
+
+```text
+Next.js UI -> server-side adapter -> LibreBooking REST API -> MySQL/MariaDB
+AI client  -> MCP server ---------^
+```
+
+- `frontend/`: new Next.js interface and LibreBooking TypeScript adapter.
+- Existing PHP directories: LibreBooking backend and REST API.
+- `WebServices/`: API implementation used by the new UI and future MCP server.
+- `database_schema/`: LibreBooking schema and upgrade scripts.
+
+The browser must not access the LibreBooking database or retain privileged API
+credentials. When the live integration is enabled, the server-side adapter will
+own LibreBooking sessions and enforce the current user's permissions.
+
+## Connect a LibreBooking instance
+
+Copy the example environment file:
+
+```bash
+cd frontend
+cp .env.example .env.local
+```
+
+Then set `LIBREBOOKING_BASE_URL`. The REST API must also be enabled in the
+LibreBooking configuration. The initial client is located at
+[`frontend/src/lib/librebooking-client.ts`](./frontend/src/lib/librebooking-client.ts).
+
+## Upstream LibreBooking documentation
+
+The original LibreBooking documentation is preserved below for backend setup,
+deployment, contribution, and license details.
+
+---
+
+# LibreBooking
 
 [![GitHub issues](https://img.shields.io/github/issues/LibreBooking/librebooking)](https://github.com/LibreBooking/librebooking/issues)
 [![Last commit](https://img.shields.io/github/last-commit/LibreBooking/librebooking)](https://github.com/LibreBooking/librebooking/commits)
