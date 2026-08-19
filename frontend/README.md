@@ -53,3 +53,25 @@ npm run build
 Sao chép `.env.example` thành `.env.local`, sau đó cấu hình
 `LIBREBOOKING_BASE_URL`. Session token phải được giữ ở server và không được đưa
 vào mã chạy trên trình duyệt.
+
+## Cấu trúc feature
+
+```text
+src/
+├── app/api/librebooking/       # BFF, giữ session và gọi LibreBooking
+├── components/debug/           # Debug console dùng chung
+├── features/
+│   ├── authentication/         # Login: types, api, service, component
+│   ├── resources/              # Resource: types, api, mapper, mock
+│   └── reservations/           # Reservation: types, api, mapper, mock
+└── lib/librebooking/           # HTTP client, server proxy và error chung
+```
+
+Component không gọi `fetch()` trực tiếp. Luồng chuẩn là:
+
+```text
+Component → service → feature/api.ts → client → BFF → LibreBooking API
+```
+
+Nếu một nút không khớp backend, kiểm tra `api.ts` khi sai endpoint,
+`mapper.ts` khi sai tên trường, và `service.ts` khi sai quy tắc nghiệp vụ.

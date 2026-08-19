@@ -1,93 +1,20 @@
 "use client";
 
-import { Activity, AlertTriangle, ArrowUpRight, Bell, Bot, Bug, Building2, CalendarDays, Car, ChevronDown, Clock3, Eye, EyeOff, LayoutDashboard, Laptop, LockKeyhole, LogIn, Menu, MoreHorizontal, Plus, Search, Settings, Sparkles, Trash2, Users, WalletCards, X } from "lucide-react";
-import { FormEvent, useEffect, useRef, useState } from "react";
+import { ArrowUpRight, Bell, Bot, Building2, CalendarDays, Car, ChevronDown, Clock3, LayoutDashboard, Laptop, Menu, MoreHorizontal, Plus, Search, Settings, Sparkles, Users, WalletCards, X } from "lucide-react";
+import { useEffect, useState } from "react";
+import { DebugConsole, type DebugEntry } from "@/components/debug/debug-console";
+import { LoginScreen } from "@/features/authentication/components/login-screen";
+import { demoResources } from "@/features/resources/mock";
+import { demoReservations } from "@/features/reservations/mock";
 
 const nav = [
   { label: "Tổng quan", icon: LayoutDashboard }, { label: "Tài nguyên", icon: Building2 },
   { label: "Lịch đặt", icon: CalendarDays }, { label: "AI Usage", icon: Bot },
   { label: "Nhân sự", icon: Users }, { label: "Chi phí", icon: WalletCards },
 ];
-const resources = [
-  { name: "Phòng họp Saigon", meta: "Tầng 8 · 12 người", type: "room", status: "Đang trống", usage: 82 },
-  { name: "Toyota Corolla Cross", meta: "Bãi xe B1 · 51A-239.18", type: "car", status: "Đang sử dụng", usage: 64 },
-  { name: "MacBook Pro M3 #024", meta: "IT Pool · Nguyễn Minh An", type: "laptop", status: "Đã cấp phát", usage: 91 },
-];
-const bookings = [
-  { time: "09:00", title: "Daily Product", place: "Phòng Saigon", color: "bg-violet-500" },
-  { time: "10:30", title: "Gặp khách hàng Nova", place: "Phòng Hanoi", color: "bg-[#df1f2d]" },
-  { time: "14:00", title: "Thiết bị quay sự kiện", place: "Sony A7 IV #02", color: "bg-amber-500" },
-];
-
 function ResourceIcon({ type }: { type: string }) {
   const Icon = type === "car" ? Car : type === "laptop" ? Laptop : Building2;
   return <Icon size={20} />;
-}
-
-type DebugEntry = { id: string; action: string; message: string; time: string };
-
-function DebugConsole({ entries, onClear, onTestError }: { entries: DebugEntry[]; onClear: () => void; onTestError: () => void }) {
-  const [open, setOpen] = useState(false);
-  const previousCount = useRef(entries.length);
-
-  useEffect(() => {
-    if (entries.length > previousCount.current) setOpen(true);
-    previousCount.current = entries.length;
-  }, [entries.length]);
-
-  return <div className="fixed bottom-5 left-5 z-[70]">
-    {open && <section className="mb-3 w-[min(420px,calc(100vw-40px))] overflow-hidden rounded-2xl border border-slate-700 bg-[#111816] text-white shadow-2xl">
-      <header className="flex items-center justify-between border-b border-white/10 px-4 py-3"><div className="flex items-center gap-2"><Bug size={16} className="text-red-300" /><span className="text-sm font-semibold">Debug log</span><span className="flex items-center gap-1 rounded-full bg-red-400/10 px-2 py-0.5 text-[10px] text-red-300"><Activity size={10} className="animate-pulse" /> LIVE</span></div><div className="flex items-center gap-1"><button onClick={onTestError} className="rounded-lg px-2 py-1.5 text-[10px] font-semibold text-amber-200 hover:bg-white/10">Tạo lỗi thử</button><button onClick={onClear} disabled={!entries.length} className="rounded-lg p-2 text-white/50 hover:bg-white/10 hover:text-white disabled:opacity-30" title="Xóa log"><Trash2 size={14} /></button><button onClick={() => setOpen(false)} className="rounded-lg p-2 text-white/50 hover:bg-white/10 hover:text-white" aria-label="Đóng debug log"><X size={14} /></button></div></header>
-      <div className="max-h-72 overflow-auto p-3">{entries.length === 0 ? <div className="py-8 text-center"><p className="text-sm font-medium text-red-200">Không có lỗi</p><p className="mt-1 text-xs text-white/40">Action thành công sẽ không được ghi lại.</p></div> : <div className="space-y-2">{entries.map(entry => <article key={entry.id} className="rounded-xl bg-rose-400/10 p-3"><div className="flex items-start gap-2"><AlertTriangle size={14} className="mt-0.5 shrink-0 text-rose-300" /><div className="min-w-0"><div className="flex items-center gap-2"><p className="truncate text-xs font-semibold text-rose-200">{entry.action}</p><time className="shrink-0 text-[10px] text-white/30">{entry.time}</time></div><p className="mt-1 break-words text-xs leading-5 text-white/60">{entry.message}</p></div></div></article>)}</div>}</div>
-    </section>}
-    <button onClick={() => setOpen(value => !value)} className={`relative grid h-11 w-11 place-items-center rounded-xl shadow-lg transition ${entries.length ? "bg-[#df1f2d] text-white" : "bg-[#171717] text-red-200 hover:bg-[#292929]"}`} title="Mở debug log"><Bug size={18} />{entries.length > 0 && <span className="absolute -right-1.5 -top-1.5 grid h-5 min-w-5 place-items-center rounded-full border-2 border-white bg-amber-400 px-1 text-[9px] font-bold text-slate-900">{entries.length}</span>}</button>
-  </div>;
-}
-
-function LoginScreen({ onLogin, onError }: { onLogin: () => void; onError: (action: string, error: unknown) => void }) {
-  const [username, setUsername] = useState("admin");
-  const [password, setPassword] = useState("demo123");
-  const [showPassword, setShowPassword] = useState(false);
-  const [error, setError] = useState("");
-  const [loading, setLoading] = useState(false);
-
-  function submit(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    setError("");
-    setLoading(true);
-    window.setTimeout(() => {
-      setLoading(false);
-      if (username.trim().toLowerCase() === "admin" && ["demo123", "demoadmin"].includes(password)) onLogin();
-      else { const message = "Tài khoản hoặc mật khẩu chưa đúng."; setError(message); onError("Đăng nhập", new Error(message)); }
-    }, 650);
-  }
-
-  return (
-    <main className="grid min-h-screen bg-[#f4f6f5] lg:grid-cols-[1.05fr_.95fr]">
-      <section className="relative hidden overflow-hidden bg-[#141414] p-12 text-white lg:flex lg:flex-col lg:justify-between">
-        <div className="absolute -right-28 -top-28 h-96 w-96 rounded-full border border-white/10" />
-        <div className="absolute -right-12 -top-12 h-64 w-64 rounded-full border border-white/10" />
-        <div className="relative flex items-center gap-3"><div className="grid h-11 w-11 place-items-center rounded-xl bg-[#df1f2d] text-white"><Sparkles size={21} /></div><div><p className="brand-font text-lg font-bold tracking-wide">THEHE<span className="text-[#ef2635]">GEO</span></p><p className="text-xs text-white/50">Resource workspace</p></div></div>
-        <div className="relative max-w-xl"><div className="mb-6 grid h-12 w-12 place-items-center rounded-2xl bg-red-500/15 text-red-300"><Building2 size={24} /></div><h1 className="text-4xl font-semibold uppercase leading-tight tracking-wide xl:text-5xl">Mọi tài nguyên của công ty, trong một nơi.</h1><p className="mt-5 max-w-lg text-base leading-7 text-white/60">Đặt phòng và thiết bị, theo dõi chi phí, kiểm soát AI usage và làm việc cùng trợ lý MCP.</p><div className="mt-9 flex gap-8"><div><p className="text-2xl font-semibold">128</p><p className="mt-1 text-xs text-white/45">Tài nguyên</p></div><div><p className="text-2xl font-semibold">67%</p><p className="mt-1 text-xs text-white/45">Công suất</p></div><div><p className="text-2xl font-semibold">24/7</p><p className="mt-1 text-xs text-white/45">Khả dụng</p></div></div></div>
-        <p className="relative text-xs text-white/35">Powered by LibreBooking · Next.js · MCP</p>
-      </section>
-
-      <section className="flex items-center justify-center px-5 py-10 sm:px-10">
-        <div className="w-full max-w-md">
-          <div className="mb-9 flex items-center gap-3 lg:hidden"><div className="grid h-10 w-10 place-items-center rounded-xl bg-[#df1f2d] text-white"><Sparkles size={19} /></div><p className="brand-font text-lg font-bold tracking-wide">THEHE<span className="text-[#df1f2d]">GEO</span> Resource</p></div>
-          <div className="mb-8"><p className="mb-3 text-sm font-semibold text-[#c71927]">Chào mừng trở lại</p><h2 className="text-3xl font-bold uppercase tracking-wide">Đăng nhập hệ thống</h2><p className="mt-2 text-sm leading-6 text-slate-500">Sử dụng tài khoản công ty để tiếp tục vào dashboard.</p></div>
-          <form onSubmit={submit} className="space-y-5">
-            <label className="block"><span className="mb-2 block text-sm font-semibold">Tên đăng nhập</span><input value={username} onChange={e => setUsername(e.target.value)} className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm outline-none transition focus:border-[#df1f2d] focus:ring-4 focus:ring-red-600/10" autoComplete="username" /></label>
-            <label className="block"><span className="mb-2 block text-sm font-semibold">Mật khẩu</span><div className="relative"><input value={password} onChange={e => setPassword(e.target.value)} type={showPassword ? "text" : "password"} className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 pr-11 text-sm outline-none transition focus:border-[#df1f2d] focus:ring-4 focus:ring-red-600/10" autoComplete="current-password" /><button type="button" onClick={() => setShowPassword(value => !value)} className="absolute right-3 top-1/2 -translate-y-1/2 p-1 text-slate-400" aria-label={showPassword ? "Ẩn mật khẩu" : "Hiện mật khẩu"}>{showPassword ? <EyeOff size={18} /> : <Eye size={18} />}</button></div></label>
-            <div className="flex items-center justify-between text-sm"><label className="flex items-center gap-2 text-slate-500"><input type="checkbox" defaultChecked className="accent-[#df1f2d]" /> Ghi nhớ đăng nhập</label><button type="button" className="font-semibold text-[#c71927]">Quên mật khẩu?</button></div>
-            {error && <p role="alert" className="rounded-xl bg-rose-50 px-4 py-3 text-sm text-rose-700">{error}</p>}
-            <button disabled={loading} className="flex w-full items-center justify-center gap-2 rounded-xl bg-[#df1f2d] px-4 py-3 text-sm font-semibold text-white transition hover:bg-[#b81521] disabled:opacity-60">{loading ? <><span className="h-4 w-4 animate-spin rounded-full border-2 border-white/30 border-t-white" /> Đang đăng nhập...</> : <><LogIn size={17} /> Đăng nhập</>}</button>
-          </form>
-          <div className="mt-6 flex items-start gap-3 rounded-xl border border-slate-200 bg-white p-4"><LockKeyhole size={17} className="mt-0.5 shrink-0 text-[#df1f2d]" /><p className="text-xs leading-5 text-slate-500"><strong className="text-slate-700">Tài khoản demo:</strong> admin / demo123 (cũng chấp nhận mật khẩu LibreBooking `demoadmin`). Bản thật sẽ xác thực qua LibreBooking hoặc SSO công ty.</p></div>
-        </div>
-      </section>
-    </main>
-  );
 }
 
 export default function Home() {
@@ -174,8 +101,8 @@ export default function Home() {
           </div>
 
           <div className="mt-5 grid gap-5 xl:grid-cols-[1.4fr_1fr]">
-            <article className="rounded-2xl border border-slate-200 bg-white p-5 md:p-6"><div className="mb-4 flex items-center justify-between"><div><h2 className="text-lg font-bold uppercase tracking-wide">Tài nguyên nổi bật</h2><p className="mt-1 text-xs text-slate-400">Tình trạng và hiệu suất sử dụng</p></div><button className="text-xs font-semibold text-[#c71927]">Xem tất cả</button></div><div className="divide-y divide-slate-100">{resources.map(resource => <div key={resource.name} className="grid grid-cols-[auto_1fr_auto] items-center gap-3 py-4"><div className="grid h-10 w-10 place-items-center rounded-xl bg-slate-100 text-slate-600"><ResourceIcon type={resource.type} /></div><div className="min-w-0"><p className="truncate text-sm font-semibold">{resource.name}</p><p className="mt-0.5 truncate text-xs text-slate-400">{resource.meta}</p></div><div className="hidden items-center gap-5 sm:flex"><div className="w-24"><div className="mb-1 flex justify-between text-[10px] text-slate-400"><span>Sử dụng</span><span>{resource.usage}%</span></div><div className="h-1.5 overflow-hidden rounded-full bg-slate-100"><div className="h-full rounded-full bg-[#df1f2d]" style={{ width: `${resource.usage}%` }} /></div></div><span className="w-24 rounded-full bg-slate-100 px-2.5 py-1 text-center text-[10px] font-medium text-slate-600">{resource.status}</span><MoreHorizontal size={17} className="text-slate-400" /></div></div>)}</div></article>
-            <article className="rounded-2xl border border-slate-200 bg-white p-5 md:p-6"><div className="mb-5 flex items-center justify-between"><div><h2 className="text-lg font-bold uppercase tracking-wide">Lịch hôm nay</h2><p className="mt-1 text-xs text-slate-400">3 booking sắp tới</p></div><CalendarDays size={19} className="text-[#c71927]" /></div><div className="space-y-5">{bookings.map(item => <div key={item.time} className="flex gap-3"><div className="w-11 text-xs font-semibold text-slate-500">{item.time}</div><div className={`mt-1 h-9 w-1 rounded-full ${item.color}`} /><div><p className="text-sm font-semibold">{item.title}</p><p className="mt-1 text-xs text-slate-400">{item.place}</p></div></div>)}</div><button onClick={() => execute("Thêm booking", quickBook)} className="mt-6 w-full rounded-xl border border-dashed border-slate-300 py-2.5 text-xs font-semibold text-slate-500 hover:border-[#df1f2d] hover:text-[#c71927]">+ Thêm booking</button></article>
+            <article className="rounded-2xl border border-slate-200 bg-white p-5 md:p-6"><div className="mb-4 flex items-center justify-between"><div><h2 className="text-lg font-bold uppercase tracking-wide">Tài nguyên nổi bật</h2><p className="mt-1 text-xs text-slate-400">Tình trạng và hiệu suất sử dụng</p></div><button className="text-xs font-semibold text-[#c71927]">Xem tất cả</button></div><div className="divide-y divide-slate-100">{demoResources.map(resource => <div key={resource.id} className="grid grid-cols-[auto_1fr_auto] items-center gap-3 py-4"><div className="grid h-10 w-10 place-items-center rounded-xl bg-slate-100 text-slate-600"><ResourceIcon type={resource.kind} /></div><div className="min-w-0"><p className="truncate text-sm font-semibold">{resource.name}</p><p className="mt-0.5 truncate text-xs text-slate-400">{resource.description}</p></div><div className="hidden items-center gap-5 sm:flex"><div className="w-24"><div className="mb-1 flex justify-between text-[10px] text-slate-400"><span>Sử dụng</span><span>{resource.usagePercent}%</span></div><div className="h-1.5 overflow-hidden rounded-full bg-slate-100"><div className="h-full rounded-full bg-[#df1f2d]" style={{ width: `${resource.usagePercent}%` }} /></div></div><span className="w-24 rounded-full bg-slate-100 px-2.5 py-1 text-center text-[10px] font-medium text-slate-600">{resource.status}</span><MoreHorizontal size={17} className="text-slate-400" /></div></div>)}</div></article>
+            <article className="rounded-2xl border border-slate-200 bg-white p-5 md:p-6"><div className="mb-5 flex items-center justify-between"><div><h2 className="text-lg font-bold uppercase tracking-wide">Lịch hôm nay</h2><p className="mt-1 text-xs text-slate-400">3 booking sắp tới</p></div><CalendarDays size={19} className="text-[#c71927]" /></div><div className="space-y-5">{demoReservations.map(item => <div key={item.id} className="flex gap-3"><div className="w-11 text-xs font-semibold text-slate-500">{item.time}</div><div className={`mt-1 h-9 w-1 rounded-full ${item.colorClass}`} /><div><p className="text-sm font-semibold">{item.title}</p><p className="mt-1 text-xs text-slate-400">{item.resourceName}</p></div></div>)}</div><button onClick={() => execute("Thêm booking", quickBook)} className="mt-6 w-full rounded-xl border border-dashed border-slate-300 py-2.5 text-xs font-semibold text-slate-500 hover:border-[#df1f2d] hover:text-[#c71927]">+ Thêm booking</button></article>
           </div>
         </div>
       </section>

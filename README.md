@@ -87,8 +87,10 @@ cp .env.example .env.local
 ```
 
 Sau đó cấu hình `LIBREBOOKING_BASE_URL` và bật REST API trong LibreBooking.
-Client kết nối ban đầu nằm tại
-[`frontend/src/lib/librebooking-client.ts`](./frontend/src/lib/librebooking-client.ts).
+Client kết nối nằm tại [`frontend/src/lib/librebooking/`](./frontend/src/lib/librebooking/),
+các API theo nghiệp vụ nằm trong [`frontend/src/features/`](./frontend/src/features/)
+và BFF routes nằm tại
+[`frontend/src/app/api/librebooking/`](./frontend/src/app/api/librebooking/).
 
 ## Tài liệu LibreBooking gốc
 
