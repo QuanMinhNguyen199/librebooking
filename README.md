@@ -78,8 +78,9 @@ LibreBooking và áp dụng quyền của người đang đăng nhập.
 | ESLint | Phát hiện lỗi và giữ quy chuẩn mã frontend |
 | Debug console | Hiển thị lỗi UI, HTTP và network theo thời gian thực |
 
-Luồng demo đề xuất: đăng nhập → chọn **Đặt tài nguyên** → nhập thông tin → xác
-nhận → kiểm tra booking mới trong **Lịch hôm nay**.
+Luồng demo đề xuất: đăng nhập → chọn **Đăng ký sử dụng** → nhập thông tin → xác
+nhận → kiểm tra lịch mới trong **Lịch sử dụng của tôi**. Nghiệp vụ mua/cấp tài
+sản mới được tách riêng dưới tên **Yêu cầu mua sắm**, không dùng booking.
 
 ## Kết nối LibreBooking thật
 

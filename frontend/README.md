@@ -23,17 +23,20 @@ Demo hiện dùng dữ liệu mẫu nên có thể chạy mà không cần PHP h
 ### Luồng đặt lịch để demo
 
 1. Đăng nhập bằng tài khoản demo.
-2. Chọn **Đặt tài nguyên** hoặc **Thêm booking**.
+2. Chọn **Đăng ký sử dụng** hoặc **Đăng ký thêm**.
 3. Nhập mục đích, tài nguyên, ngày, giờ và số người.
 4. Chọn **Xác nhận đặt lịch**.
-5. Booking mới xuất hiện ngay trong mục **Lịch hôm nay**.
+5. Lịch mới xuất hiện ngay trong mục **Lịch sử dụng của tôi**.
 
-Sidebar tách rõ hai tác vụ giống mô hình của LibreBooking:
+Sidebar dùng **Lịch sử dụng** để xem các lượt đăng ký hiện có. Nút
+**Đăng ký sử dụng** nằm trong nội dung trang là hành động tạo reservation mới,
+tránh lặp lại cùng một CTA ở hai vị trí.
 
-- **Đặt tài nguyên**: mở ngay form tìm và tạo reservation.
-- **Lịch của tôi**: đi tới danh sách các booking sắp tới của người dùng.
+“Đăng ký sử dụng” chỉ áp dụng cho phòng, xe và thiết bị công ty đã có. Nghiệp vụ
+mua tài sản hoặc dụng cụ mới sẽ là một feature riêng tên **Yêu cầu mua sắm**,
+không thuộc phạm vi booking của LibreBooking.
 
-Trong phiên bản hoàn chỉnh, **Lịch của tôi** sẽ có chế độ ngày/tuần/tháng và tải
+Trong phiên bản hoàn chỉnh, **Lịch sử dụng** sẽ có chế độ ngày/tuần/tháng và tải
 dữ liệu từ Reservations API.
 
 Nếu giờ kết thúc không hợp lệ, lỗi sẽ xuất hiện ngay trong debug console.
