@@ -9,6 +9,7 @@ export type ReservationSummary = {
 export type CreateReservationInput = {
   title: string;
   resourceId: string;
+  resourceName: string;
   startsAt: string;
   endsAt: string;
 };

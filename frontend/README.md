@@ -20,6 +20,16 @@ Mật khẩu `demoadmin` của demo LibreBooking gốc cũng được chấp nh�
 
 Demo hiện dùng dữ liệu mẫu nên có thể chạy mà không cần PHP hoặc MySQL.
 
+### Luồng đặt lịch để demo
+
+1. Đăng nhập bằng tài khoản demo.
+2. Chọn **Đặt tài nguyên** hoặc **Thêm booking**.
+3. Nhập mục đích, tài nguyên, ngày, giờ và số người.
+4. Chọn **Xác nhận đặt lịch**.
+5. Booking mới xuất hiện ngay trong mục **Lịch hôm nay**.
+
+Nếu giờ kết thúc không hợp lệ, lỗi sẽ xuất hiện ngay trong debug console.
+
 ## Công cụ chính
 
 | Công cụ | Mục đích |
@@ -28,6 +38,7 @@ Demo hiện dùng dữ liệu mẫu nên có thể chạy mà không cần PHP h
 | TypeScript | Kiểm soát dữ liệu và giảm lỗi khi kết nối API |
 | Tailwind CSS | Styling responsive theo màu sắc THEHEGEO |
 | Lucide React | Cung cấp icon cho giao diện |
+| Feature service | Kiểm tra dữ liệu và điều phối việc tạo booking |
 | LibreBooking client | Chuẩn hóa việc gọi Authentication, Resources và Reservations API |
 | Debug console | Ghi lỗi action, HTTP, network và JavaScript theo thời gian thực |
 | ESLint | Kiểm tra chất lượng mã nguồn |
@@ -42,6 +53,7 @@ npm run build
 ## Trạng thái hiện tại
 
 - Màn hình đăng nhập và dashboard: sẵn sàng demo.
+- Form đặt lịch và cập nhật lịch hôm nay: sẵn sàng demo bằng dữ liệu mẫu.
 - Giao diện responsive và nhận diện THEHEGEO: sẵn sàng demo.
 - Debug log real-time: sẵn sàng demo; thao tác thành công không được ghi log.
 - LibreBooking client: đã có khung Authentication, Resources và Reservations.

@@ -28,9 +28,10 @@ npm run dev
 
 Mở <http://localhost:3000>.
 
-Bản demo gồm màn hình đăng nhập, dashboard responsive, tài nguyên vật lý,
-booking, chi phí, Claude usage và debug log real-time. Dữ liệu hiện tại là dữ
-liệu mẫu phục vụ trình bày, chưa được lấy từ LibreBooking đang chạy thật.
+Bản demo gồm màn hình đăng nhập, dashboard responsive, form đặt tài nguyên,
+lịch cập nhật ngay sau khi booking, chi phí, Claude usage và debug log real-time.
+Dữ liệu hiện tại là dữ liệu mẫu phục vụ trình bày, chưa được lấy từ LibreBooking
+đang chạy thật.
 
 Tài khoản demo:
 
@@ -76,6 +77,9 @@ LibreBooking và áp dụng quyền của người đang đăng nhập.
 | MCP | Cho phép trợ lý AI tìm và đặt tài nguyên; hiện đang ở giai đoạn kế hoạch |
 | ESLint | Phát hiện lỗi và giữ quy chuẩn mã frontend |
 | Debug console | Hiển thị lỗi UI, HTTP và network theo thời gian thực |
+
+Luồng demo đề xuất: đăng nhập → chọn **Đặt tài nguyên** → nhập thông tin → xác
+nhận → kiểm tra booking mới trong **Lịch hôm nay**.
 
 ## Kết nối LibreBooking thật
 
