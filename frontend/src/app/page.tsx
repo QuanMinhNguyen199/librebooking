@@ -1,7 +1,7 @@
 "use client";
 
-import { ArrowUpRight, Bell, Bot, Building2, CalendarDays, Car, ChevronDown, Clock3, LayoutDashboard, Laptop, Menu, MoreHorizontal, Plus, Search, Settings, Sparkles, Users, WalletCards, X } from "lucide-react";
-import { useState } from "react";
+import { ArrowUpRight, Bell, Bot, Building2, CalendarDays, Car, ChevronDown, Clock3, Eye, EyeOff, LayoutDashboard, Laptop, LockKeyhole, LogIn, Menu, MoreHorizontal, Plus, Search, Settings, Sparkles, Users, WalletCards, X } from "lucide-react";
+import { FormEvent, useState } from "react";
 
 const nav = [
   { label: "Tổng quan", icon: LayoutDashboard }, { label: "Tài nguyên", icon: Building2 },
@@ -24,11 +24,60 @@ function ResourceIcon({ type }: { type: string }) {
   return <Icon size={20} />;
 }
 
+function LoginScreen({ onLogin }: { onLogin: () => void }) {
+  const [username, setUsername] = useState("admin");
+  const [password, setPassword] = useState("demo123");
+  const [showPassword, setShowPassword] = useState(false);
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  function submit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setError("");
+    setLoading(true);
+    window.setTimeout(() => {
+      setLoading(false);
+      if (username === "admin" && password === "demo123") onLogin();
+      else setError("Tài khoản hoặc mật khẩu chưa đúng.");
+    }, 650);
+  }
+
+  return (
+    <main className="grid min-h-screen bg-[#f4f6f5] lg:grid-cols-[1.05fr_.95fr]">
+      <section className="relative hidden overflow-hidden bg-[#1d3026] p-12 text-white lg:flex lg:flex-col lg:justify-between">
+        <div className="absolute -right-28 -top-28 h-96 w-96 rounded-full border border-white/10" />
+        <div className="absolute -right-12 -top-12 h-64 w-64 rounded-full border border-white/10" />
+        <div className="relative flex items-center gap-3"><div className="grid h-11 w-11 place-items-center rounded-xl bg-white text-[#1d3026]"><Sparkles size={21} /></div><div><p className="font-bold">Nexa Resource</p><p className="text-xs text-white/50">Company workspace</p></div></div>
+        <div className="relative max-w-xl"><div className="mb-6 grid h-12 w-12 place-items-center rounded-2xl bg-emerald-300/15 text-emerald-200"><Building2 size={24} /></div><h1 className="text-4xl font-semibold leading-tight tracking-tight xl:text-5xl">Mọi tài nguyên của công ty, trong một nơi.</h1><p className="mt-5 max-w-lg text-base leading-7 text-white/60">Đặt phòng và thiết bị, theo dõi chi phí, kiểm soát AI usage và làm việc cùng trợ lý MCP.</p><div className="mt-9 flex gap-8"><div><p className="text-2xl font-semibold">128</p><p className="mt-1 text-xs text-white/45">Tài nguyên</p></div><div><p className="text-2xl font-semibold">67%</p><p className="mt-1 text-xs text-white/45">Công suất</p></div><div><p className="text-2xl font-semibold">24/7</p><p className="mt-1 text-xs text-white/45">Khả dụng</p></div></div></div>
+        <p className="relative text-xs text-white/35">Powered by LibreBooking · Next.js · MCP</p>
+      </section>
+
+      <section className="flex items-center justify-center px-5 py-10 sm:px-10">
+        <div className="w-full max-w-md">
+          <div className="mb-9 flex items-center gap-3 lg:hidden"><div className="grid h-10 w-10 place-items-center rounded-xl bg-[#1d3026] text-white"><Sparkles size={19} /></div><p className="font-bold">Nexa Resource</p></div>
+          <div className="mb-8"><p className="mb-3 text-sm font-semibold text-emerald-700">Chào mừng trở lại</p><h2 className="text-3xl font-bold tracking-tight">Đăng nhập hệ thống</h2><p className="mt-2 text-sm leading-6 text-slate-500">Sử dụng tài khoản công ty để tiếp tục vào dashboard.</p></div>
+          <form onSubmit={submit} className="space-y-5">
+            <label className="block"><span className="mb-2 block text-sm font-semibold">Tên đăng nhập</span><input value={username} onChange={e => setUsername(e.target.value)} className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm outline-none transition focus:border-emerald-600 focus:ring-4 focus:ring-emerald-600/10" autoComplete="username" /></label>
+            <label className="block"><span className="mb-2 block text-sm font-semibold">Mật khẩu</span><div className="relative"><input value={password} onChange={e => setPassword(e.target.value)} type={showPassword ? "text" : "password"} className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 pr-11 text-sm outline-none transition focus:border-emerald-600 focus:ring-4 focus:ring-emerald-600/10" autoComplete="current-password" /><button type="button" onClick={() => setShowPassword(value => !value)} className="absolute right-3 top-1/2 -translate-y-1/2 p-1 text-slate-400" aria-label={showPassword ? "Ẩn mật khẩu" : "Hiện mật khẩu"}>{showPassword ? <EyeOff size={18} /> : <Eye size={18} />}</button></div></label>
+            <div className="flex items-center justify-between text-sm"><label className="flex items-center gap-2 text-slate-500"><input type="checkbox" defaultChecked className="accent-emerald-700" /> Ghi nhớ đăng nhập</label><button type="button" className="font-semibold text-emerald-700">Quên mật khẩu?</button></div>
+            {error && <p role="alert" className="rounded-xl bg-rose-50 px-4 py-3 text-sm text-rose-700">{error}</p>}
+            <button disabled={loading} className="flex w-full items-center justify-center gap-2 rounded-xl bg-[#1f5639] px-4 py-3 text-sm font-semibold text-white transition hover:bg-[#16452d] disabled:opacity-60">{loading ? <><span className="h-4 w-4 animate-spin rounded-full border-2 border-white/30 border-t-white" /> Đang đăng nhập...</> : <><LogIn size={17} /> Đăng nhập</>}</button>
+          </form>
+          <div className="mt-6 flex items-start gap-3 rounded-xl border border-slate-200 bg-white p-4"><LockKeyhole size={17} className="mt-0.5 shrink-0 text-emerald-700" /><p className="text-xs leading-5 text-slate-500"><strong className="text-slate-700">Tài khoản demo:</strong> admin / demo123. Bản thật sẽ xác thực qua LibreBooking hoặc SSO công ty.</p></div>
+        </div>
+      </section>
+    </main>
+  );
+}
+
 export default function Home() {
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [active, setActive] = useState("Tổng quan");
   const [mobileOpen, setMobileOpen] = useState(false);
   const [toast, setToast] = useState(false);
   function quickBook() { setToast(true); window.setTimeout(() => setToast(false), 2600); }
+
+  if (!isLoggedIn) return <LoginScreen onLogin={() => setIsLoggedIn(true)} />;
 
   return (
     <main className="min-h-screen bg-[#f5f6f8] text-[#172026]">
@@ -44,7 +93,7 @@ export default function Home() {
       <section className="lg:pl-64">
         <header className="sticky top-0 z-20 flex h-18 items-center justify-between border-b border-slate-200/80 bg-white/90 px-4 backdrop-blur md:px-8">
           <div className="flex items-center gap-3"><button className="rounded-lg p-2 hover:bg-slate-100 lg:hidden" onClick={() => setMobileOpen(true)} aria-label="Mở menu"><Menu size={20} /></button><div className="relative hidden sm:block"><Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={17} /><input className="w-72 rounded-xl border border-slate-200 bg-slate-50 py-2.5 pl-10 pr-4 text-sm outline-none transition focus:border-emerald-500 focus:bg-white" placeholder="Tìm tài nguyên, nhân viên..." /></div></div>
-          <div className="flex items-center gap-3"><button className="relative rounded-xl border border-slate-200 p-2.5 text-slate-500 hover:bg-slate-50"><Bell size={18} /><span className="absolute right-2 top-2 h-1.5 w-1.5 rounded-full bg-rose-500" /></button><button className="flex items-center gap-2 rounded-xl border border-slate-200 px-2 py-1.5 hover:bg-slate-50"><div className="grid h-8 w-8 place-items-center rounded-lg bg-[#d9ebe0] text-xs font-bold text-[#20583b]">MN</div><div className="hidden text-left md:block"><p className="text-xs font-semibold">Minh Nguyễn</p><p className="text-[10px] text-slate-400">Administrator</p></div><ChevronDown size={14} className="text-slate-400" /></button></div>
+          <div className="flex items-center gap-3"><button className="relative rounded-xl border border-slate-200 p-2.5 text-slate-500 hover:bg-slate-50"><Bell size={18} /><span className="absolute right-2 top-2 h-1.5 w-1.5 rounded-full bg-rose-500" /></button><button onClick={() => setIsLoggedIn(false)} title="Đăng xuất khỏi bản demo" className="flex items-center gap-2 rounded-xl border border-slate-200 px-2 py-1.5 hover:bg-slate-50"><div className="grid h-8 w-8 place-items-center rounded-lg bg-[#d9ebe0] text-xs font-bold text-[#20583b]">MN</div><div className="hidden text-left md:block"><p className="text-xs font-semibold">Minh Nguyễn</p><p className="text-[10px] text-slate-400">Administrator</p></div><ChevronDown size={14} className="text-slate-400" /></button></div>
         </header>
 
         <div className="mx-auto max-w-[1500px] p-4 md:p-8">
