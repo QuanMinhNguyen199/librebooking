@@ -21,7 +21,9 @@ Copy `.env.example` to `.env.local` when connecting a LibreBooking instance. Do 
 
 - Dashboard UI: ready for demo.
 - Login screen and logout interaction: ready for demo.
-- Error-only debug console: ready; successful actions are intentionally not logged.
+- Real-time error-only debug console: captures failed actions, HTTP/network errors,
+  JavaScript errors, rejected promises, and `console.error`; successful actions
+  are intentionally not logged.
 - Responsive navigation: ready for demo.
 - LibreBooking client: initial authentication/resources/reservations methods.
 - Live LibreBooking data: not connected yet.
