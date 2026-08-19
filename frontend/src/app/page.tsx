@@ -26,7 +26,7 @@ function ResourceIcon({ type }: { type: string }) {
 
 type DebugEntry = { id: string; action: string; message: string; time: string };
 
-function DebugConsole({ entries, onClear }: { entries: DebugEntry[]; onClear: () => void }) {
+function DebugConsole({ entries, onClear, onTestError }: { entries: DebugEntry[]; onClear: () => void; onTestError: () => void }) {
   const [open, setOpen] = useState(false);
   const previousCount = useRef(entries.length);
 
@@ -37,7 +37,7 @@ function DebugConsole({ entries, onClear }: { entries: DebugEntry[]; onClear: ()
 
   return <div className="fixed bottom-5 left-5 z-[70]">
     {open && <section className="mb-3 w-[min(420px,calc(100vw-40px))] overflow-hidden rounded-2xl border border-slate-700 bg-[#111816] text-white shadow-2xl">
-      <header className="flex items-center justify-between border-b border-white/10 px-4 py-3"><div className="flex items-center gap-2"><Bug size={16} className="text-emerald-300" /><span className="text-sm font-semibold">Debug log</span><span className="flex items-center gap-1 rounded-full bg-emerald-400/10 px-2 py-0.5 text-[10px] text-emerald-300"><Activity size={10} className="animate-pulse" /> LIVE</span></div><div className="flex gap-1"><button onClick={onClear} disabled={!entries.length} className="rounded-lg p-2 text-white/50 hover:bg-white/10 hover:text-white disabled:opacity-30" title="Xóa log"><Trash2 size={14} /></button><button onClick={() => setOpen(false)} className="rounded-lg p-2 text-white/50 hover:bg-white/10 hover:text-white" aria-label="Đóng debug log"><X size={14} /></button></div></header>
+      <header className="flex items-center justify-between border-b border-white/10 px-4 py-3"><div className="flex items-center gap-2"><Bug size={16} className="text-emerald-300" /><span className="text-sm font-semibold">Debug log</span><span className="flex items-center gap-1 rounded-full bg-emerald-400/10 px-2 py-0.5 text-[10px] text-emerald-300"><Activity size={10} className="animate-pulse" /> LIVE</span></div><div className="flex items-center gap-1"><button onClick={onTestError} className="rounded-lg px-2 py-1.5 text-[10px] font-semibold text-amber-200 hover:bg-white/10">Tạo lỗi thử</button><button onClick={onClear} disabled={!entries.length} className="rounded-lg p-2 text-white/50 hover:bg-white/10 hover:text-white disabled:opacity-30" title="Xóa log"><Trash2 size={14} /></button><button onClick={() => setOpen(false)} className="rounded-lg p-2 text-white/50 hover:bg-white/10 hover:text-white" aria-label="Đóng debug log"><X size={14} /></button></div></header>
       <div className="max-h-72 overflow-auto p-3">{entries.length === 0 ? <div className="py-8 text-center"><p className="text-sm font-medium text-emerald-200">Không có lỗi</p><p className="mt-1 text-xs text-white/40">Action thành công sẽ không được ghi lại.</p></div> : <div className="space-y-2">{entries.map(entry => <article key={entry.id} className="rounded-xl bg-rose-400/10 p-3"><div className="flex items-start gap-2"><AlertTriangle size={14} className="mt-0.5 shrink-0 text-rose-300" /><div className="min-w-0"><div className="flex items-center gap-2"><p className="truncate text-xs font-semibold text-rose-200">{entry.action}</p><time className="shrink-0 text-[10px] text-white/30">{entry.time}</time></div><p className="mt-1 break-words text-xs leading-5 text-white/60">{entry.message}</p></div></div></article>)}</div>}</div>
     </section>}
     <button onClick={() => setOpen(value => !value)} className={`relative grid h-11 w-11 place-items-center rounded-xl shadow-lg transition ${entries.length ? "bg-rose-600 text-white" : "bg-[#17271f] text-emerald-200 hover:bg-[#20372c]"}`} title="Mở debug log"><Bug size={18} />{entries.length > 0 && <span className="absolute -right-1.5 -top-1.5 grid h-5 min-w-5 place-items-center rounded-full border-2 border-white bg-amber-400 px-1 text-[9px] font-bold text-slate-900">{entries.length}</span>}</button>
@@ -57,7 +57,7 @@ function LoginScreen({ onLogin, onError }: { onLogin: () => void; onError: (acti
     setLoading(true);
     window.setTimeout(() => {
       setLoading(false);
-      if (username === "admin" && password === "demo123") onLogin();
+      if (username.trim().toLowerCase() === "admin" && ["demo123", "demoadmin"].includes(password)) onLogin();
       else { const message = "Tài khoản hoặc mật khẩu chưa đúng."; setError(message); onError("Đăng nhập", new Error(message)); }
     }, 650);
   }
@@ -83,7 +83,7 @@ function LoginScreen({ onLogin, onError }: { onLogin: () => void; onError: (acti
             {error && <p role="alert" className="rounded-xl bg-rose-50 px-4 py-3 text-sm text-rose-700">{error}</p>}
             <button disabled={loading} className="flex w-full items-center justify-center gap-2 rounded-xl bg-[#1f5639] px-4 py-3 text-sm font-semibold text-white transition hover:bg-[#16452d] disabled:opacity-60">{loading ? <><span className="h-4 w-4 animate-spin rounded-full border-2 border-white/30 border-t-white" /> Đang đăng nhập...</> : <><LogIn size={17} /> Đăng nhập</>}</button>
           </form>
-          <div className="mt-6 flex items-start gap-3 rounded-xl border border-slate-200 bg-white p-4"><LockKeyhole size={17} className="mt-0.5 shrink-0 text-emerald-700" /><p className="text-xs leading-5 text-slate-500"><strong className="text-slate-700">Tài khoản demo:</strong> admin / demo123. Bản thật sẽ xác thực qua LibreBooking hoặc SSO công ty.</p></div>
+          <div className="mt-6 flex items-start gap-3 rounded-xl border border-slate-200 bg-white p-4"><LockKeyhole size={17} className="mt-0.5 shrink-0 text-emerald-700" /><p className="text-xs leading-5 text-slate-500"><strong className="text-slate-700">Tài khoản demo:</strong> admin / demo123 (cũng chấp nhận mật khẩu LibreBooking `demoadmin`). Bản thật sẽ xác thực qua LibreBooking hoặc SSO công ty.</p></div>
         </div>
       </section>
     </main>
@@ -100,7 +100,8 @@ export default function Home() {
 
   function reportError(action: string, error: unknown) {
     const message = error instanceof Error ? error.message : String(error);
-    setDebugEntries(current => [{ id: crypto.randomUUID(), action, message, time: new Date().toLocaleTimeString("vi-VN") }, ...current].slice(0, 50));
+    const id = `${Date.now()}-${Math.random().toString(36).slice(2)}`;
+    setDebugEntries(current => [{ id, action, message, time: new Date().toLocaleTimeString("vi-VN") }, ...current].slice(0, 50));
   }
 
   async function execute(action: string, operation: () => void | Promise<void>) {
@@ -140,7 +141,9 @@ export default function Home() {
     };
   }, []);
 
-  if (!isLoggedIn) return <><LoginScreen onLogin={() => setIsLoggedIn(true)} onError={reportError} /><DebugConsole entries={debugEntries} onClear={() => setDebugEntries([])} /></>;
+  const debugConsole = <DebugConsole entries={debugEntries} onClear={() => setDebugEntries([])} onTestError={() => reportError("Kiểm tra debug", new Error("Debug console đang cập nhật real-time."))} />;
+
+  if (!isLoggedIn) return <><LoginScreen onLogin={() => setIsLoggedIn(true)} onError={reportError} />{debugConsole}</>;
 
   return (
     <main className="min-h-screen bg-[#f5f6f8] text-[#172026]">
@@ -177,7 +180,7 @@ export default function Home() {
         </div>
       </section>
       {toast && <div className="fixed bottom-6 right-6 z-50 flex items-center gap-3 rounded-xl bg-[#17271f] px-4 py-3 text-sm font-medium text-white shadow-xl"><span className="grid h-7 w-7 place-items-center rounded-lg bg-emerald-400/20 text-emerald-300"><CalendarDays size={15} /></span> Đã mở luồng đặt tài nguyên demo</div>}
-      <DebugConsole entries={debugEntries} onClear={() => setDebugEntries([])} />
+      {debugConsole}
     </main>
   );
 }
