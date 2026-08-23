@@ -10,19 +10,31 @@ export async function submitReservation(input: CreateReservationInput): Promise<
     await new Promise(resolve => window.setTimeout(resolve, 500));
     return {
       id: `demo-${Date.now()}`,
+      date: input.startsAt.slice(0, 10),
       time: input.startsAt.slice(11, 16),
+      endsAt: input.endsAt.slice(11, 16),
       title: input.title,
       resourceName: input.resourceName,
+      resourceId: input.resourceId,
       colorClass: "bg-[#df1f2d]",
+      status: input.requiresApproval ? "pending" : "confirmed",
+      participantEmails: input.participantEmails,
+      bookedBy: "Người dùng hiện tại",
     };
   }
 
   const result = await createReservation(input);
   return {
     id: result.referenceNumber,
+    date: input.startsAt.slice(0, 10),
     time: input.startsAt.slice(11, 16),
+    endsAt: input.endsAt.slice(11, 16),
     title: input.title,
     resourceName: input.resourceName,
+    resourceId: input.resourceId,
     colorClass: "bg-[#df1f2d]",
+    status: input.requiresApproval ? "pending" : "confirmed",
+    participantEmails: input.participantEmails,
+    bookedBy: "Người dùng hiện tại",
   };
 }

@@ -7,5 +7,6 @@ export function toLibreBookingReservation(input: CreateReservationInput) {
     startDateTime: input.startsAt,
     endDateTime: input.endsAt,
     accessories: input.accessories,
+    participantEmails: input.participantEmails,
   };
 }

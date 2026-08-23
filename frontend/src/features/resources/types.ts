@@ -15,6 +15,7 @@ export type ResourceSummary = {
   kind: ResourceKind;
   status: string;
   usagePercent: number;
+  requiresApproval?: boolean;
   amenities?: string[];
   accessories?: ResourceAccessory[];
 };

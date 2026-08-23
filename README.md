@@ -29,15 +29,18 @@ npm run dev
 Mở <http://localhost:3000>.
 
 Bản demo gồm màn hình đăng nhập, dashboard responsive, form đặt tài nguyên,
-lịch cập nhật ngay sau khi booking, chi phí, Claude usage và debug log real-time.
+lịch cập nhật ngay sau khi đặt, tình trạng phòng, chi phí vận hành và debug log
+real-time.
 Dữ liệu hiện tại là dữ liệu mẫu phục vụ trình bày, chưa được lấy từ LibreBooking
 đang chạy thật.
 
-Tài khoản demo:
+Prototype public sau khi bật GitHub Pages:
+<https://quanminhnguyen199.github.io/librebooking/>. Bản public chỉ chứa mock
+data và không triển khai các API route phía server.
 
-```text
-admin / demo123
-```
+Tài khoản demo dùng chung mật khẩu `demo123`: `employee`, `manager`,
+`resourceadmin`, `sysadmin` và `ceo`. Mỗi tài khoản có sidebar, Dashboard và
+phạm vi dữ liệu khác nhau theo Role + Scope.
 
 ### Kiểm tra mã nguồn
 
@@ -98,6 +101,19 @@ và BFF routes nằm tại
 [`frontend/src/app/api/librebooking/`](./frontend/src/app/api/librebooking/).
 
 ## Tài liệu LibreBooking gốc
+
+Đọc [Tổng quan chức năng LibreBooking bằng tiếng Việt](./docs/LIBREBOOKING-FUNCTIONS-VI.md)
+để hiểu các nghiệp vụ có sẵn, REST API và phần nào dự án THEHEGEO phải tự xây.
+Theo dõi [Implementation plan và checklist](./docs/IMPLEMENTATION-PLAN-VI.md)
+trước khi quyết định commit/push một thay đổi.
+Đọc và duyệt [Business Analysis](./docs/BUSINESS-ANALYSIS-VI.md) trước khi thiết
+kế hoặc triển khai một nghiệp vụ mới.
+Xem [Roadmap và bản đồ tool–feature](./docs/ROADMAP-VI.md) để biết thứ tự triển
+khai và API/tool nào phục vụ từng chức năng.
+Xem [Mindmap tổng thể THG Resource](./docs/THG-MINDMAP-VI.md) để hình dung người
+dùng, calendar, reservation, resource và toàn bộ luồng hoạt động.
+Xem [Calendar UX Specification](./docs/CALENDAR-UX-SPEC-VI.md) để hiểu cấu trúc
+lưới Ngày/Tuần/Tháng và quy tắc hiển thị theo Role + Scope.
 
 Tài liệu nguyên bản được giữ bên dưới để tham khảo cách cài backend, triển khai,
 đóng góp mã nguồn và giấy phép.

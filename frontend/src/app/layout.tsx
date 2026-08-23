@@ -14,8 +14,8 @@ const barlowCondensed = Barlow_Condensed({
 });
 
 export const metadata: Metadata = {
-  title: "THEHEGEO Resource — Company Workspace",
-  description: "Quản lý tài nguyên, booking và chi phí công ty",
+  title: "THEHEGEO — Quản lý tài nguyên",
+  description: "Đặt phòng, quản lý tài nguyên và theo dõi chi phí công ty",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {

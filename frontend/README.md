@@ -10,24 +10,41 @@ npm install
 npm run dev
 ```
 
-Mở <http://localhost:3000> và đăng nhập bằng:
+Mở <http://localhost:3000>. Các tài khoản demo dùng chung mật khẩu `demo123`:
 
-```text
-admin / demo123
-```
+| Username | Role | Nội dung được xem |
+|---|---|---|
+| `employee` | Nhân viên | Announcement, nhắc nhở, Calendar và Resource |
+| `manager` | Manager | Báo cáo sử dụng, chi phí và phê duyệt trong Marketing |
+| `resourceadmin` | Admin tài nguyên | Tình trạng phòng, chi phí vận hành và phê duyệt tại Văn phòng HCM |
+| `sysadmin` | Admin hệ thống | Kiểm tra toàn bộ feature và quản lý tài khoản, nhóm, quyền |
+| `ceo` | CEO | Tình trạng phòng, mức sử dụng và chi phí vận hành toàn công ty |
 
-Mật khẩu `demoadmin` của demo LibreBooking gốc cũng được chấp nhận.
+Mật khẩu `demoadmin` cũng được chấp nhận để tương thích demo cũ.
+
+### Xem prototype trên GitHub Pages
+
+Sau khi workflow deploy được push lên nhánh `develop`, prototype sẽ có tại:
+
+<https://quanminhnguyen199.github.io/librebooking/>
+
+Đây là bản static chỉ dùng mock data để mọi người xem và góp ý. Các route BFF và
+LibreBooking API không được đưa lên GitHub Pages. Không nhập dữ liệu thật hoặc
+thông tin nhạy cảm vào bản public này.
+
+Để kích hoạt lần đầu, vào repository **Settings → Pages → Build and deployment**
+và chọn nguồn **GitHub Actions**. Các lần push tiếp theo có thay đổi trong
+`frontend/` sẽ tự động cập nhật trang.
+
+### Cấu trúc page theo feature
+
+Mỗi feature có page riêng trong sidebar. `Kiểm tra lịch` dùng để xem thời gian,
+`Danh mục phòng` dùng để xem phòng và thiết bị bên trong, còn `Đặt tài nguyên`
+dùng để tạo Reservation. Kết quả được đưa về Calendar và highlight ngắn để
+người dùng nhận ra vị trí. Các điểm bắt đầu đều dùng chung một booking form và
+service gọi API.
 
 Demo hiện dùng dữ liệu mẫu nên có thể chạy mà không cần PHP hoặc MySQL.
-
-### Trợ lý ảo dạng bubble
-
-Sau khi đăng nhập, **GEO Assistant** xuất hiện dưới dạng bubble nổi. Có thể kéo
-bubble đến bất kỳ vị trí nào trong màn hình và bấm để mở hộp chat. Trợ lý có thể
-mô phỏng tìm phòng, đọc chi phí Claude và mở trực tiếp form đăng ký phòng.
-
-Nhãn **Chế độ mô phỏng** giúp phân biệt rõ với MCP/AI thật. Khi kết nối backend,
-phần hội thoại sẽ gọi MCP qua BFF thay vì chứa credential trên trình duyệt.
 
 ### Luồng đặt lịch để demo
 
@@ -37,18 +54,38 @@ phần hội thoại sẽ gọi MCP qua BFF thay vì chứa credential trên tr�
 4. Thử chuyển phòng: danh sách tiện nghi/thiết bị sẽ cập nhật ngay và thiết bị
    không còn phù hợp sẽ được bỏ chọn.
 5. Nhập ngày, giờ, số người; chọn thiết bị kèm số lượng nếu cần.
-6. Chọn **Xác nhận đăng ký**. Lịch mới xuất hiện trong **Lịch sử dụng của tôi**.
+6. Kiểm tra lịch cá nhân, phòng, công ty, nhóm và ngày lễ trước khi đặt.
+7. Nếu phòng bị trùng, đổi giờ; lịch cá nhân/công ty/nhóm chỉ tạo cảnh báo.
+8. Xác nhận hoặc gửi yêu cầu duyệt. Reservation xuất hiện trong Calendar.
 
-Sidebar dùng **Lịch sử dụng** để xem các lượt đăng ký hiện có. Nút
-**Đăng ký sử dụng** nằm trong nội dung trang là hành động tạo reservation mới,
-tránh lặp lại cùng một CTA ở hai vị trí.
+### Các lớp lịch khi kiểm tra booking
+
+- **Lịch của tôi:** sự kiện cá nhân và reservation user tạo/tham gia.
+- **Phòng & thiết bị:** reservation, blackout và bảo trì theo resource.
+- **Lịch công ty:** town hall, đào tạo và sự kiện chung.
+- **Nhóm của tôi:** chỉ hiện theo role/scope của Lead hoặc Manager.
+- **Ngày lễ Việt Nam:** luôn bật và không thể ẩn.
+
+Một reservation có thể thuộc nhiều nguồn nhưng chỉ hiển thị một lần theo
+`reservationId`. Private event chỉ hiện “Bận” với người không có quyền xem.
+Xung đột resource/blackout chặn đăng ký; xung đột lịch cá nhân, công ty hoặc nhóm
+chỉ cảnh báo. Phê duyệt dựa trên chính sách của resource, không dựa trên nguồn lịch.
+
+Các lịch đang dùng dữ liệu demo. Khi kết nối thật, reservation của tổ chức lấy
+từ LibreBooking; lịch cá nhân và ngày lễ cần adapter từ calendar provider. Quyền
+riêng tư phải được xử lý ở server/BFF trước khi trả dữ liệu xuống trình duyệt.
+
+Sidebar dùng **Kiểm tra lịch** để mở lịch hợp nhất theo cách quen thuộc của
+Google Calendar/Apple Calendar. Người dùng có thể chuyển ngày, xem theo
+ngày/tuần/tháng và bật hoặc tắt từng nguồn lịch. Nút **Đăng ký sử dụng** là hành
+động tạo reservation mới.
 
 “Đăng ký sử dụng” chỉ áp dụng cho phòng, xe và thiết bị công ty đã có. Nghiệp vụ
 mua tài sản hoặc dụng cụ mới sẽ là một feature riêng tên **Yêu cầu mua sắm**,
 không thuộc phạm vi booking của LibreBooking.
 
-Trong phiên bản hoàn chỉnh, **Lịch sử dụng** sẽ có chế độ ngày/tuần/tháng và tải
-dữ liệu từ Reservations API.
+Trong phiên bản hoàn chỉnh, lịch tài nguyên sẽ tải từ Reservations API; lịch
+công ty, lịch cá nhân và ngày lễ sẽ đi qua calendar adapter tại BFF.
 
 ### Phòng, tiện nghi và thiết bị đi kèm
 
@@ -79,7 +116,6 @@ Nếu giờ kết thúc không hợp lệ, lỗi sẽ xuất hiện ngay trong d
 | Feature service | Kiểm tra dữ liệu và điều phối việc tạo booking |
 | LibreBooking client | Chuẩn hóa việc gọi Authentication, Resources và Reservations API |
 | Debug console | Ghi lỗi action, HTTP, network và JavaScript theo thời gian thực |
-| GEO Assistant | Bubble kéo thả và hội thoại mô phỏng tác vụ MCP/AI |
 | ESLint | Kiểm tra chất lượng mã nguồn |
 
 ## Kiểm tra trước khi chạy demo
@@ -96,7 +132,7 @@ npm run build
   hôm nay: sẵn sàng demo bằng dữ liệu mẫu.
 - Giao diện responsive và nhận diện THEHEGEO: sẵn sàng demo.
 - Debug log real-time: sẵn sàng demo; thao tác thành công không được ghi log.
-- GEO Assistant kéo thả và chat theo kịch bản: sẵn sàng demo.
+- AI Agent và MCP: tạm ẩn để demo tập trung vào đặt lịch và quản lý tài nguyên.
 - LibreBooking client: đã có khung Authentication, Resources và Reservations.
 - Dữ liệu LibreBooking thật: chưa kết nối.
 - MCP server: đang trong kế hoạch, chưa triển khai.
@@ -119,13 +155,20 @@ src/
 │   ├── page.tsx                # Ghép dashboard và quản lý trạng thái màn hình
 │   └── api/librebooking/       # BFF, giữ session và gọi LibreBooking
 ├── components/
-│   ├── assistant/              # GEO Assistant dạng bubble
+│   ├── assistant/              # Mã thử nghiệm, chưa hiển thị trong demo
 │   ├── brand/                  # Logo và nhận diện THEHEGEO
 │   └── debug/                  # Debug console dùng chung
 ├── features/
+│   ├── dashboard/              # Dashboard thay đổi theo Role + Scope
 │   ├── authentication/         # Login: types, api, service, component
+│   ├── calendar/               # Nguồn lịch, loại sự kiện và kiểm tra xung đột
 │   ├── resources/              # Resource, tiện nghi, accessory và dữ liệu mẫu
-│   └── reservations/           # Reservation: types, api, mapper, mock
+│   ├── reservations/           # Reservation: types, api, mapper, mock
+│   ├── usage/                  # Resource Usage theo scope
+│   ├── ai-usage/               # Mã thử nghiệm, ngoài phạm vi demo hiện tại
+│   ├── costs/                  # Chi phí vận hành phòng và thiết bị
+│   ├── people/                 # Nhân sự, Role và Scope
+│   └── approvals/              # Danh sách Reservation chờ duyệt
 └── lib/librebooking/           # HTTP client, server proxy và error chung
 ```
 

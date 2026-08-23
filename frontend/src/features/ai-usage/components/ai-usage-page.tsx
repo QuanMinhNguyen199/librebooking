@@ -1,0 +1,8 @@
+import { Bot, Coins, Cpu, Users } from "lucide-react";
+import type { AuthUser } from "@/features/authentication/types";
+
+export function AiUsagePage({ user }: { user: AuthUser }) {
+  const values = user.role === "executive" ? ["$1,284.60", "284.2M", "42.8M", "36", "$2,000", "64%"] : ["$312.40", "68.4M", "11.2M", "8", "$500", "62%"];
+  const metrics = [["Chi phí", values[0], Coins], ["Token đầu vào", values[1], Cpu], ["Token đầu ra", values[2], Bot], ["Người sử dụng", values[3], Users]];
+  return <div><div className="mb-7"><p className="text-sm font-medium text-[#c71927]">Theo dõi ngân sách AI</p><h1 className="mt-1 text-3xl font-bold uppercase tracking-wide">Sử dụng AI</h1><p className="mt-1 text-sm text-slate-500">Số liệu minh họa trong phạm vi {user.scope}.</p></div><div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">{metrics.map(([label, value, Icon]) => { const MetricIcon = Icon as typeof Bot; return <article key={label as string} className="rounded-2xl border border-slate-200 bg-white p-5"><MetricIcon size={20} className="text-[#c71927]" /><p className="mt-4 text-sm text-slate-500">{label as string}</p><p className="mt-1 text-2xl font-bold">{value as string}</p></article>; })}</div><article className="mt-5 rounded-2xl border border-slate-200 bg-white p-6"><div className="flex justify-between text-sm"><span className="font-semibold">Ngân sách tháng</span><span>{values[0]} / {values[4]}</span></div><div className="mt-4 h-3 overflow-hidden rounded-full bg-slate-100"><div className="h-full w-[64%] rounded-full bg-[#df1f2d]" /></div><p className="mt-3 text-xs text-slate-400">Đã dùng {values[5]} ngân sách được cấp.</p></article></div>;
+}

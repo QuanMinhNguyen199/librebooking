@@ -4,9 +4,11 @@ import { Building2, Eye, EyeOff, LockKeyhole, LogIn } from "lucide-react";
 import { FormEvent, useState } from "react";
 import { BrandMark } from "@/components/brand/brand-mark";
 import { login } from "../service";
+import { demoUsers } from "../mock";
+import type { AuthSession } from "../types";
 
-export function LoginScreen({ onLogin, onError }: { onLogin: () => void; onError: (action: string, error: unknown) => void }) {
-  const [username, setUsername] = useState("admin");
+export function LoginScreen({ onLogin, onError }: { onLogin: (session: AuthSession) => void; onError: (action: string, error: unknown) => void }) {
+  const [username, setUsername] = useState("employee");
   const [password, setPassword] = useState("demo123");
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
@@ -14,7 +16,7 @@ export function LoginScreen({ onLogin, onError }: { onLogin: () => void; onError
 
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault(); setError(""); setLoading(true);
-    try { await login({ username, password }); onLogin(); }
+    try { const session = await login({ username, password }); onLogin(session); }
     catch (caught) { const message = caught instanceof Error ? caught.message : "Không thể đăng nhập."; setError(message); onError("Đăng nhập", caught); }
     finally { setLoading(false); }
   }
@@ -23,8 +25,8 @@ export function LoginScreen({ onLogin, onError }: { onLogin: () => void; onError
     <section className="relative hidden overflow-hidden bg-[#141414] p-12 text-white lg:flex lg:flex-col lg:justify-between">
       <div className="absolute -right-28 -top-28 h-96 w-96 rounded-full border border-white/10" /><div className="absolute -right-12 -top-12 h-64 w-64 rounded-full border border-white/10" />
       <div className="relative"><BrandMark inverse /></div>
-      <div className="relative max-w-xl"><div className="mb-6 grid h-12 w-12 place-items-center rounded-2xl bg-red-500/15 text-red-300"><Building2 size={24} /></div><h1 className="text-4xl font-semibold uppercase leading-tight tracking-wide xl:text-5xl">Mọi tài nguyên của công ty, trong một nơi.</h1><p className="mt-5 max-w-lg text-base leading-7 text-white/60">Đặt phòng và thiết bị, theo dõi chi phí, kiểm soát AI usage và làm việc cùng trợ lý MCP.</p><div className="mt-9 flex gap-8"><div><p className="text-2xl font-semibold">128</p><p className="mt-1 text-xs text-white/45">Tài nguyên</p></div><div><p className="text-2xl font-semibold">67%</p><p className="mt-1 text-xs text-white/45">Công suất</p></div><div><p className="text-2xl font-semibold">24/7</p><p className="mt-1 text-xs text-white/45">Khả dụng</p></div></div></div>
-      <p className="relative text-xs text-white/35">Powered by LibreBooking · Next.js · MCP</p>
+      <div className="relative max-w-xl"><div className="mb-6 grid h-12 w-12 place-items-center rounded-2xl bg-red-500/15 text-red-300"><Building2 size={24} /></div><h1 className="text-4xl font-semibold uppercase leading-tight tracking-wide xl:text-5xl">Mọi tài nguyên của công ty, trong một nơi.</h1><p className="mt-5 max-w-lg text-base leading-7 text-white/60">Xem lịch, đặt phòng và theo dõi chi phí theo đúng phạm vi công việc của bạn.</p><div className="mt-9 flex gap-8"><div><p className="text-2xl font-semibold">128</p><p className="mt-1 text-xs text-white/45">Tài nguyên</p></div><div><p className="text-2xl font-semibold">67%</p><p className="mt-1 text-xs text-white/45">Mức sử dụng</p></div><div><p className="text-2xl font-semibold">24/7</p><p className="mt-1 text-xs text-white/45">Sẵn sàng</p></div></div></div>
+      <p className="relative text-xs text-white/35">Vận hành trên nền tảng LibreBooking</p>
     </section>
     <section className="flex items-center justify-center px-5 py-10 sm:px-10"><div className="w-full max-w-md">
       <div className="mb-9 lg:hidden"><BrandMark /></div>
@@ -36,7 +38,7 @@ export function LoginScreen({ onLogin, onError }: { onLogin: () => void; onError
         {error && <p role="alert" className="rounded-xl bg-rose-50 px-4 py-3 text-sm text-rose-700">{error}</p>}
         <button disabled={loading} className="flex w-full items-center justify-center gap-2 rounded-xl bg-[#df1f2d] px-4 py-3 text-sm font-semibold text-white transition hover:bg-[#b81521] disabled:opacity-60">{loading ? <><span className="h-4 w-4 animate-spin rounded-full border-2 border-white/30 border-t-white" /> Đang đăng nhập...</> : <><LogIn size={17} /> Đăng nhập</>}</button>
       </form>
-      <div className="mt-6 flex items-start gap-3 rounded-xl border border-slate-200 bg-white p-4"><LockKeyhole size={17} className="mt-0.5 shrink-0 text-[#df1f2d]" /><p className="text-xs leading-5 text-slate-500"><strong className="text-slate-700">Tài khoản demo:</strong> admin / demo123 (cũng chấp nhận `demoadmin`).</p></div>
+      <div className="mt-6 rounded-xl border border-slate-200 bg-white p-4"><div className="mb-3 flex items-center gap-2"><LockKeyhole size={16} className="text-[#df1f2d]" /><p className="text-xs font-semibold text-slate-700">Chọn tài khoản demo · mật khẩu demo123</p></div><div className="grid grid-cols-2 gap-2">{demoUsers.map(user => <button key={user.username} type="button" onClick={() => { setUsername(user.username); setPassword("demo123"); }} className="rounded-lg bg-slate-50 px-3 py-2 text-left hover:bg-red-50"><span className="block text-xs font-semibold text-slate-700">{user.username}</span><span className="block text-[10px] text-slate-400">{user.roleLabel}</span></button>)}</div></div>
     </div></section>
   </main>;
 }

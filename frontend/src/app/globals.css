@@ -23,4 +23,16 @@ h1, h2, .brand-font {
 }
 
 button, a { cursor: pointer; }
+
+@keyframes result-highlight {
+  0% { background-color: rgb(254 226 226); box-shadow: 0 0 0 4px rgb(223 31 45 / 20%); }
+  45% { background-color: rgb(254 242 242); box-shadow: 0 0 0 3px rgb(223 31 45 / 12%); }
+  100% { background-color: transparent; box-shadow: 0 0 0 0 transparent; }
+}
+
+.result-highlight {
+  animation: result-highlight 1.8s ease-out both;
+  border-radius: 0.75rem;
+}
+
 * { box-sizing: border-box; }

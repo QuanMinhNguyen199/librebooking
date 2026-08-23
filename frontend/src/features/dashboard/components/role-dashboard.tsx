@@ -1,0 +1,63 @@
+import { AlertTriangle, BellRing, Building2, CalendarClock, CheckCircle2, CircleDollarSign, Gauge, KeyRound, Megaphone, ServerCog, Wrench } from "lucide-react";
+import type { AuthUser } from "@/features/authentication/types";
+import type { ReservationSummary } from "@/features/reservations/types";
+
+type Props = { user: AuthUser; reservations: ReservationSummary[]; onNavigate: (page: string) => void; onOpenReservation: (reservationId: string) => void };
+type Metric = { label: string; value: string; note: string; icon: typeof Gauge; page?: string; tone: string };
+
+function MetricGrid({ metrics, onNavigate }: { metrics: Metric[]; onNavigate: (page: string) => void }) {
+  return <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">{metrics.map(({ label, value, note, icon: Icon, page, tone }) => { const content = <><span className={`grid h-10 w-10 place-items-center rounded-xl ${tone}`}><Icon size={19} /></span><p className="mt-4 text-sm text-slate-500">{label}</p><p className="mt-1 text-2xl font-bold">{value}</p><p className="mt-2 text-xs text-slate-400">{note}{page ? " · Xem chi tiết →" : ""}</p></>; return page ? <button key={label} onClick={() => onNavigate(page)} className="rounded-2xl border border-slate-200 bg-white p-5 text-left transition hover:-translate-y-0.5 hover:shadow-md">{content}</button> : <article key={label} className="rounded-2xl border border-slate-200 bg-white p-5">{content}</article>; })}</div>;
+}
+
+function Notices() {
+  return <article className="rounded-2xl border border-slate-200 bg-white p-5 md:p-6"><div className="flex items-center gap-3"><span className="grid h-10 w-10 place-items-center rounded-xl bg-red-50 text-[#c71927]"><Megaphone size={19} /></span><div><h2 className="font-bold uppercase tracking-wide">Thông báo</h2><p className="text-xs text-slate-400">Từ công ty và nhóm của bạn</p></div></div><div className="mt-5 space-y-3"><div className="rounded-xl bg-slate-50 p-4"><p className="text-sm font-semibold">Cập nhật quy định sử dụng phòng họp</p><p className="mt-1 text-xs leading-5 text-slate-500">Vui lòng hủy đặt chỗ sớm nếu không còn nhu cầu sử dụng.</p></div><div className="rounded-xl bg-slate-50 p-4"><p className="text-sm font-semibold">Bảo trì Phòng Saigon · 21/08</p><p className="mt-1 text-xs leading-5 text-slate-500">Hệ thống trình chiếu không khả dụng từ 08:00 đến 12:00.</p></div></div></article>;
+}
+
+function Reminders({ reservations, onOpenReservation, team = false }: { reservations: ReservationSummary[]; onOpenReservation: (id: string) => void; team?: boolean }) {
+  return <article className="rounded-2xl border border-slate-200 bg-white p-5 md:p-6"><div className="flex items-center gap-3"><span className="grid h-10 w-10 place-items-center rounded-xl bg-blue-50 text-blue-700"><BellRing size={19} /></span><div><h2 className="font-bold uppercase tracking-wide">{team ? "Lịch cần chú ý trong team" : "Nhắc nhở"}</h2><p className="text-xs text-slate-400">Bấm để mở đúng đặt chỗ trên lịch</p></div></div><div className="mt-5 space-y-3">{reservations.slice(0, 3).map(item => <button key={item.id} onClick={() => onOpenReservation(item.id)} className="flex w-full items-center gap-3 rounded-xl border border-slate-100 p-3 text-left hover:bg-slate-50"><CalendarClock size={17} className="text-[#c71927]" /><div className="min-w-0 flex-1"><p className="truncate text-sm font-semibold">{item.title}</p><p className="text-xs text-slate-400">{item.time} · {item.resourceName}</p></div>{item.status === "pending" && <span className="rounded-full bg-amber-50 px-2 py-1 text-[9px] font-semibold text-amber-700">Chờ duyệt</span>}</button>)}</div></article>;
+}
+
+function ResourceOperations({ onNavigate }: { onNavigate: (page: string) => void }) {
+  const items = [["Phòng Saigon", "Màn hình trình chiếu cần bảo trì", "21/08"], ["Phòng Hanoi", "Webcam hội nghị mất kết nối", "Hôm nay"], ["Phòng Brainstorm", "Sắp đến lịch bảo dưỡng điều hòa", "23/08"]];
+  return <article className="rounded-2xl border border-slate-200 bg-white p-5 md:p-6"><div className="flex items-center justify-between"><div><h2 className="font-bold uppercase tracking-wide">Cần xử lý</h2><p className="mt-1 text-xs text-slate-400">Sự cố và bảo trì trong Văn phòng HCM</p></div><Wrench className="text-[#c71927]" size={20} /></div><div className="mt-5 divide-y divide-slate-100">{items.map(([room, issue, date]) => <button key={room} onClick={() => onNavigate("resources")} className="grid w-full gap-1 py-3 text-left text-sm sm:grid-cols-[160px_1fr_auto]"><span className="font-semibold">{room}</span><span className="text-slate-500">{issue}</span><span className="text-xs text-slate-400">{date}</span></button>)}</div></article>;
+}
+
+function ApprovalReminders({ reservations, onNavigate }: { reservations: ReservationSummary[]; onNavigate: (page: string) => void }) {
+  const pending = reservations.filter(item => item.status === "pending");
+  return <article className="rounded-2xl border border-amber-200 bg-white p-5 md:p-6"><div className="flex items-center justify-between"><div><h2 className="font-bold uppercase tracking-wide">Reservation chờ duyệt</h2><p className="mt-1 text-xs text-slate-400">Yêu cầu sử dụng phòng cần Admin tài nguyên xử lý</p></div><span className="rounded-full bg-amber-50 px-3 py-1 text-xs font-bold text-amber-700">{Math.max(pending.length, 1)} yêu cầu</span></div><div className="mt-4 space-y-2">{pending.length > 0 ? pending.slice(0, 3).map(item => <button key={item.id} onClick={() => onNavigate("approvals")} className="flex w-full items-center justify-between gap-4 rounded-xl bg-amber-50/60 p-3 text-left"><div className="min-w-0"><p className="truncate text-sm font-semibold">{item.title}</p><p className="mt-1 text-xs text-slate-500">{item.bookedBy ?? "Nhân viên"} · {item.resourceName} · {item.time}–{item.endsAt}</p></div><span className="shrink-0 text-xs font-semibold text-amber-700">Xem yêu cầu →</span></button>) : <button onClick={() => onNavigate("approvals")} className="w-full rounded-xl bg-slate-50 p-3 text-left text-sm text-slate-500">Mở danh sách yêu cầu chờ duyệt →</button>}</div></article>;
+}
+
+function ExecutiveRoomInsight({ onNavigate }: { onNavigate: (page: string) => void }) {
+  return <div className="mt-5 grid gap-5 lg:grid-cols-[1.2fr_.8fr]"><article className="rounded-2xl border border-slate-200 bg-white p-5 md:p-6"><div className="flex items-center justify-between"><div><h2 className="font-bold uppercase tracking-wide">Hiệu quả sử dụng phòng</h2><p className="mt-1 text-xs text-slate-400">Dựa trên thời gian đã đặt trong tháng</p></div><Building2 size={20} className="text-[#c71927]" /></div><div className="mt-5 space-y-4">{[["Phòng Saigon", 86, "Dùng nhiều nhất"], ["Phòng Hanoi", 63, "Ổn định"], ["Phòng Brainstorm", 21, "Dùng ít nhất"]].map(([room, percent, label]) => <div key={room as string}><div className="flex justify-between text-xs"><span className="font-semibold">{room as string}</span><span className="text-slate-400">{label as string} · {percent as number}%</span></div><div className="mt-2 h-2 overflow-hidden rounded-full bg-slate-100"><div className="h-full rounded-full bg-[#df1f2d]" style={{ width: `${percent}%` }} /></div></div>)}</div><button onClick={() => onNavigate("usage")} className="mt-5 text-xs font-semibold text-[#c71927]">Xem báo cáo sử dụng →</button></article><article className="rounded-2xl border border-amber-200 bg-amber-50/60 p-5 md:p-6"><AlertTriangle className="text-amber-700" /><h2 className="mt-4 font-bold">Gợi ý cần xem xét</h2><p className="mt-2 text-sm leading-6 text-slate-600">Phòng Brainstorm chỉ đạt 21% thời gian được đặt. Cần kiểm tra lại công năng, vị trí và thiết bị trước khi quyết định cải tạo.</p><p className="mt-4 text-xs text-slate-400">Đây là nhận định từ dữ liệu đặt chỗ, chưa phải thời gian sử dụng thực tế.</p></article></div>;
+}
+
+function SystemOverview() {
+  return <div className="grid gap-5 lg:grid-cols-2"><article className="rounded-2xl border border-slate-200 bg-white p-6"><div className="flex items-center gap-3"><ServerCog className="text-[#c71927]" /><div><h2 className="font-bold uppercase tracking-wide">Trạng thái tích hợp</h2><p className="text-xs text-slate-400">Các dịch vụ cần theo dõi</p></div></div><div className="mt-5 space-y-3">{[["LibreBooking API", "Hoạt động"], ["Dịch vụ gửi email", "Cần kiểm tra"], ["Đồng bộ Calendar", "Chưa kết nối"]].map(([name, status]) => <div key={name} className="flex justify-between rounded-xl bg-slate-50 p-3 text-sm"><span className="font-medium">{name}</span><span className="text-slate-500">{status}</span></div>)}</div></article><article className="rounded-2xl border border-slate-200 bg-white p-6"><div className="flex items-center gap-3"><KeyRound className="text-[#c71927]" /><div><h2 className="font-bold uppercase tracking-wide">Tài khoản và quyền</h2><p className="text-xs text-slate-400">Việc quản trị cần xử lý</p></div></div><div className="mt-5 grid grid-cols-2 gap-3"><div className="rounded-xl bg-red-50 p-4"><p className="text-2xl font-bold">2</p><p className="mt-1 text-xs text-slate-500">Yêu cầu cấp quyền</p></div><div className="rounded-xl bg-amber-50 p-4"><p className="text-2xl font-bold">1</p><p className="mt-1 text-xs text-slate-500">Tài khoản cần rà soát</p></div></div></article></div>;
+}
+
+export function RoleDashboard({ user, reservations, onNavigate, onOpenReservation }: Props) {
+  const pending = reservations.filter(item => item.status === "pending").length;
+  const header = <div className="mb-7"><p className="text-sm font-medium text-[#c71927]">Thứ năm, 20 tháng 8</p><h1 className="mt-1 text-2xl font-bold uppercase tracking-wide md:text-3xl">Chào {user.name}</h1><p className="mt-1 text-sm text-slate-500">Thông tin dành cho {user.roleLabel} trong phạm vi {user.scope}.</p></div>;
+
+  if (user.role === "employee") return <div>{header}<div className="grid gap-5 lg:grid-cols-[1.2fr_.8fr]"><Notices /><Reminders reservations={reservations} onOpenReservation={onOpenReservation} /></div></div>;
+  if (user.role === "system_admin") return <div>{header}<SystemOverview /></div>;
+  if (user.role === "executive") return <div>{header}<MetricGrid onNavigate={onNavigate} metrics={[
+    { label: "Chi phí vận hành", value: "184,6 tr", note: "Tháng này · toàn công ty", icon: CircleDollarSign, page: "costs", tone: "bg-violet-50 text-violet-700" },
+    { label: "Mức sử dụng", value: "67%", note: "Dựa trên thời gian đã đặt", icon: Gauge, page: "usage", tone: "bg-blue-50 text-blue-700" },
+    { label: "Chi phí trung bình mỗi giờ phòng được đặt", value: "1,46 triệu đồng", note: "Tháng này · Tổng chi vận hành ÷ tổng giờ đã đặt", icon: Building2, page: "costs", tone: "bg-emerald-50 text-emerald-700" },
+    { label: "Hủy hoặc không đến", value: "8%", note: "Cần theo dõi xu hướng", icon: AlertTriangle, page: "usage", tone: "bg-amber-50 text-amber-700" },
+  ]} /><ExecutiveRoomInsight onNavigate={onNavigate} /></div>;
+  if (user.role === "resource_admin") return <div>{header}<MetricGrid onNavigate={onNavigate} metrics={[
+    { label: "Phòng cần xử lý", value: "3", note: "Bảo trì hoặc có sự cố", icon: Building2, page: "resources", tone: "bg-red-50 text-[#c71927]" },
+    { label: "Thiết bị chờ xử lý", value: "5", note: "Trong Văn phòng HCM", icon: Wrench, page: "costs", tone: "bg-amber-50 text-amber-700" },
+    { label: "Yêu cầu chờ duyệt", value: String(Math.max(pending, 3)), note: user.scope, icon: CheckCircle2, page: "approvals", tone: "bg-blue-50 text-blue-700" },
+    { label: "Chi phí vận hành", value: "28,4 tr", note: "Tháng này · Văn phòng HCM", icon: CircleDollarSign, page: "costs", tone: "bg-violet-50 text-violet-700" },
+  ]} /><div className="mt-5 grid gap-5 xl:grid-cols-2"><ApprovalReminders reservations={reservations} onNavigate={onNavigate} /><ResourceOperations onNavigate={onNavigate} /></div></div>;
+
+  return <div>{header}<MetricGrid onNavigate={onNavigate} metrics={[
+    { label: "Mức sử dụng của team", value: "61%", note: user.scope, icon: Gauge, page: "usage", tone: "bg-blue-50 text-blue-700" },
+    { label: "Yêu cầu cần duyệt", value: String(Math.max(pending, 2)), note: "Trong team", icon: CheckCircle2, page: "approvals", tone: "bg-red-50 text-[#c71927]" },
+    { label: "Hủy hoặc không đến", value: "6%", note: "Dựa trên dữ liệu đặt chỗ", icon: AlertTriangle, page: "usage", tone: "bg-amber-50 text-amber-700" },
+    { label: "Chi phí vận hành", value: "42,8 tr", note: "Theo quyền được cấp", icon: CircleDollarSign, page: "costs", tone: "bg-violet-50 text-violet-700" },
+  ]} /><div className="mt-5 grid gap-5 lg:grid-cols-2"><Notices /><Reminders team reservations={reservations} onOpenReservation={onOpenReservation} /></div></div>;
+}
