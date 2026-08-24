@@ -1,4 +1,4 @@
-import { AlertTriangle, BellRing, Building2, CalendarClock, CheckCircle2, CircleDollarSign, Gauge, KeyRound, Megaphone, ServerCog, Wrench } from "lucide-react";
+import { AlertTriangle, BellRing, Building2, CalendarClock, CheckCircle2, CircleDollarSign, Gauge, KeyRound, Megaphone, ServerCog, UsersRound, Wrench } from "lucide-react";
 import type { AuthUser } from "@/features/authentication/types";
 import type { ReservationSummary } from "@/features/reservations/types";
 
@@ -6,7 +6,8 @@ type Props = { user: AuthUser; reservations: ReservationSummary[]; onNavigate: (
 type Metric = { label: string; value: string; note: string; icon: typeof Gauge; page?: string; tone: string };
 
 function MetricGrid({ metrics, onNavigate }: { metrics: Metric[]; onNavigate: (page: string) => void }) {
-  return <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">{metrics.map(({ label, value, note, icon: Icon, page, tone }) => { const content = <><span className={`grid h-10 w-10 place-items-center rounded-xl ${tone}`}><Icon size={19} /></span><p className="mt-4 text-sm text-slate-500">{label}</p><p className="mt-1 text-2xl font-bold">{value}</p><p className="mt-2 text-xs text-slate-400">{note}{page ? " · Xem chi tiết →" : ""}</p></>; return page ? <button key={label} onClick={() => onNavigate(page)} className="rounded-2xl border border-slate-200 bg-white p-5 text-left transition hover:-translate-y-0.5 hover:shadow-md">{content}</button> : <article key={label} className="rounded-2xl border border-slate-200 bg-white p-5">{content}</article>; })}</div>;
+  const columns = metrics.length === 2 ? "xl:grid-cols-2" : metrics.length === 3 ? "xl:grid-cols-3" : "xl:grid-cols-4";
+  return <div className={`grid gap-4 sm:grid-cols-2 ${columns}`}>{metrics.map(({ label, value, note, icon: Icon, page, tone }) => { const content = <><span className={`grid h-10 w-10 place-items-center rounded-xl ${tone}`}><Icon size={19} /></span><p className="mt-4 text-sm text-slate-500">{label}</p><p className="mt-1 text-2xl font-bold">{value}</p><p className="mt-2 text-xs text-slate-400">{note}{page ? " · Xem chi tiết →" : ""}</p></>; return page ? <button key={label} onClick={() => onNavigate(page)} className="rounded-2xl border border-slate-200 bg-white p-5 text-left transition hover:-translate-y-0.5 hover:shadow-md">{content}</button> : <article key={label} className="rounded-2xl border border-slate-200 bg-white p-5">{content}</article>; })}</div>;
 }
 
 function Notices() {
@@ -15,6 +16,28 @@ function Notices() {
 
 function Reminders({ reservations, onOpenReservation, team = false }: { reservations: ReservationSummary[]; onOpenReservation: (id: string) => void; team?: boolean }) {
   return <article className="rounded-2xl border border-slate-200 bg-white p-5 md:p-6"><div className="flex items-center gap-3"><span className="grid h-10 w-10 place-items-center rounded-xl bg-blue-50 text-blue-700"><BellRing size={19} /></span><div><h2 className="font-bold uppercase tracking-wide">{team ? "Lịch cần chú ý trong team" : "Nhắc nhở"}</h2><p className="text-xs text-slate-400">Bấm để mở đúng đặt chỗ trên lịch</p></div></div><div className="mt-5 space-y-3">{reservations.slice(0, 3).map(item => <button key={item.id} onClick={() => onOpenReservation(item.id)} className="flex w-full items-center gap-3 rounded-xl border border-slate-100 p-3 text-left hover:bg-slate-50"><CalendarClock size={17} className="text-[#c71927]" /><div className="min-w-0 flex-1"><p className="truncate text-sm font-semibold">{item.title}</p><p className="text-xs text-slate-400">{item.time} · {item.resourceName}</p></div>{item.status === "pending" && <span className="rounded-full bg-amber-50 px-2 py-1 text-[9px] font-semibold text-amber-700">Chờ duyệt</span>}</button>)}</div></article>;
+}
+
+function EmployeeDashboard({ user, reservations, onNavigate, onOpenReservation }: Props) {
+  const upcoming = reservations.slice(0, 3);
+  const pending = reservations.filter(item => item.status === "pending").length;
+  const rooms = [
+    { name: "Phòng họp Saigon", detail: "Tầng 8 · 12 người", available: true },
+    { name: "Phòng họp Hanoi", detail: "Tầng 6 · 8 người", available: true },
+    { name: "Phòng Brainstorm", detail: "Tầng 5 · 6 người", available: false },
+  ];
+  const metrics: Metric[] = [
+    { label: "Cuộc họp tiếp theo", value: upcoming[0]?.time ?? "—", note: upcoming[0] ? `${upcoming[0].title} · ${upcoming[0].resourceName}` : "Hôm nay chưa có lịch", icon: CalendarClock, page: "calendar", tone: "bg-blue-50 text-blue-700" },
+    { label: "Đang chờ duyệt", value: String(pending), note: "Xem trạng thái yêu cầu", icon: BellRing, page: "calendar", tone: "bg-amber-50 text-amber-700" },
+  ];
+
+  return <div>
+    <div className="mb-7 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between"><div><h1 className="text-2xl font-bold md:text-3xl">Xin chào, {user.name}! <span aria-hidden>👋</span></h1><p className="mt-2 text-sm text-slate-500">Thứ hai, 24 tháng 8, 2026</p><p className="mt-1 text-xs text-slate-400">{upcoming[0] ? `Lịch gần nhất lúc ${upcoming[0].time} tại ${upcoming[0].resourceName}.` : "Hôm nay bạn chưa có lịch đặt phòng."}</p></div><button onClick={() => onNavigate("booking")} className="rounded-xl bg-[#c71927] px-5 py-3 text-sm font-semibold text-white shadow-sm hover:bg-[#ad1421]">+ Đặt phòng</button></div>
+    <MetricGrid metrics={metrics} onNavigate={onNavigate} />
+    <article className="mt-5 rounded-2xl border border-slate-200 bg-white p-5 md:p-6"><div className="flex items-center justify-between"><div><h2 className="font-bold">Lịch sắp tới</h2><p className="mt-1 text-xs text-slate-400">Các lịch đặt phòng gần nhất của bạn</p></div><button onClick={() => onNavigate("calendar")} className="text-xs font-semibold text-[#c71927]">Xem tất cả →</button></div><div className="mt-4 divide-y divide-slate-100">{upcoming.map(item => <button key={item.id} onClick={() => onOpenReservation(item.id)} className="grid w-full gap-2 py-4 text-left sm:grid-cols-[110px_1fr_auto] sm:items-center"><div><p className="text-xs font-semibold">{item.date}</p><p className="mt-1 text-xs text-slate-400">{item.time}–{item.endsAt}</p></div><div><p className="text-sm font-semibold">{item.title}</p><p className="mt-1 text-xs text-slate-400">{item.resourceName}</p></div><span className={`w-fit rounded-full px-2.5 py-1 text-[10px] font-semibold ${item.status === "pending" ? "bg-amber-50 text-amber-700" : "bg-emerald-50 text-emerald-700"}`}>{item.status === "pending" ? "Chờ duyệt" : "Đã duyệt"}</span></button>)}</div></article>
+    <article className="mt-5 rounded-2xl border border-slate-200 bg-white p-5 md:p-6"><div className="flex items-center justify-between"><div><div className="flex items-center gap-2"><span className="h-2 w-2 rounded-full bg-emerald-500" /><h2 className="font-bold">Tình trạng phòng</h2></div><p className="mt-1 text-xs text-slate-400">Kiểm tra nhanh trước khi chuyển sang đặt phòng</p></div><button onClick={() => onNavigate("resources")} className="text-xs font-semibold text-[#c71927]">Xem danh mục →</button></div><div className="mt-4 grid gap-4 md:grid-cols-3">{rooms.map((room, index) => <div key={room.name} className="overflow-hidden rounded-xl border border-slate-200 bg-white"><div className={`relative h-28 overflow-hidden ${index === 0 ? "bg-gradient-to-br from-slate-200 via-stone-100 to-amber-100" : index === 1 ? "bg-gradient-to-br from-sky-100 via-slate-100 to-stone-200" : "bg-gradient-to-br from-stone-200 via-orange-50 to-slate-300"}`}><div className="absolute inset-x-5 bottom-4 h-8 rounded-[50%] bg-slate-700/80 shadow-lg" /><div className="absolute bottom-2 left-8 h-9 w-2 -rotate-6 bg-slate-600" /><div className="absolute bottom-2 right-8 h-9 w-2 rotate-6 bg-slate-600" /><div className="absolute left-4 top-4 h-12 w-20 rounded border-4 border-white/70 bg-sky-200/60 shadow-sm" /><div className="absolute right-4 top-4 h-10 w-14 rounded bg-slate-800/75 shadow-sm" /><span className={`absolute right-3 top-3 rounded-full px-2 py-1 text-[10px] font-semibold shadow-sm ${room.available ? "bg-emerald-50 text-emerald-700" : "bg-red-50 text-red-700"}`}>{room.available ? "Đang trống" : "Đang sử dụng"}</span></div><div className="p-4"><p className="text-sm font-semibold">{room.name}</p><p className="mt-1 flex items-center gap-1.5 text-xs text-slate-400"><UsersRound size={13} />{room.detail}</p><button onClick={() => room.available ? onNavigate("booking") : onNavigate("calendar")} className="mt-4 w-full rounded-lg border border-slate-200 py-2 text-xs font-semibold text-slate-600 hover:border-[#c71927] hover:text-[#c71927]">{room.available ? "Đặt phòng" : "Xem lịch"}</button></div></div>)}</div></article>
+    <article className="mt-5 flex flex-col justify-between gap-4 rounded-2xl border border-slate-200 bg-white p-5 sm:flex-row sm:items-center md:p-6"><div className="flex items-center gap-3"><span className="grid h-10 w-10 place-items-center rounded-xl bg-violet-50 text-violet-700"><CheckCircle2 size={19} /></span><div><p className="text-sm font-semibold">Hoạt động trong tháng</p><p className="mt-1 text-xs text-slate-400">Số liệu tham khảo, không cần xử lý ngay</p></div></div><div className="text-left sm:text-right"><p className="text-2xl font-bold">12</p><p className="text-xs text-slate-400">lượt đặt trong tháng 8/2026</p></div></article>
+  </div>;
 }
 
 function ResourceOperations({ onNavigate }: { onNavigate: (page: string) => void }) {
@@ -39,7 +62,7 @@ export function RoleDashboard({ user, reservations, onNavigate, onOpenReservatio
   const pending = reservations.filter(item => item.status === "pending").length;
   const header = <div className="mb-7"><p className="text-sm font-medium text-[#c71927]">Thứ năm, 20 tháng 8</p><h1 className="mt-1 text-2xl font-bold uppercase tracking-wide md:text-3xl">Chào {user.name}</h1><p className="mt-1 text-sm text-slate-500">Thông tin dành cho {user.roleLabel} trong phạm vi {user.scope}.</p></div>;
 
-  if (user.role === "employee") return <div>{header}<div className="grid gap-5 lg:grid-cols-[1.2fr_.8fr]"><Notices /><Reminders reservations={reservations} onOpenReservation={onOpenReservation} /></div></div>;
+  if (user.role === "employee") return <EmployeeDashboard user={user} reservations={reservations} onNavigate={onNavigate} onOpenReservation={onOpenReservation} />;
   if (user.role === "system_admin") return <div>{header}<SystemOverview /></div>;
   if (user.role === "executive") return <div>{header}<MetricGrid onNavigate={onNavigate} metrics={[
     { label: "Chi phí vận hành", value: "184,6 tr", note: "Tháng này · toàn công ty", icon: CircleDollarSign, page: "costs", tone: "bg-violet-50 text-violet-700" },
